@@ -12,7 +12,10 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        });
+        })
+            .AddTransient<ApplicationDbSeeder>();
         return services;
     }
+
+
 }

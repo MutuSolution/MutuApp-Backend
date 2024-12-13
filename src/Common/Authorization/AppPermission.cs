@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace Common.Authorization;
 
@@ -14,8 +9,8 @@ public record AppPermission(
     string Description,
     bool IsBasic = false)
 {
-    public string Name { get; set; }
-    public static string NameFor(string feature, string action) => $"Permissions. {feature}.{action}";
+    public string Name => NameFor(Feature, Action);
+    public static string NameFor(string feature, string action) => $"Permissions.{feature}.{action}";
 }
 
 public class Permissions
@@ -45,8 +40,8 @@ public class Permissions
     };
 
     public static IReadOnlyList<AppPermission> AdminPermissions { get; } =
-        new ReadOnlyCollection<AppPermission>(_all.Where(p => !p.IsBasic).ToArray()); 
-    
+        new ReadOnlyCollection<AppPermission>(_all.Where(p => !p.IsBasic).ToArray());
+
     public static IReadOnlyList<AppPermission> BasicPermissions { get; } =
         new ReadOnlyCollection<AppPermission>(_all.Where(p => p.IsBasic).ToArray());
 }
