@@ -1,11 +1,12 @@
 ﻿using Common.Requests;
 using Common.Responses;
+using Common.Responses.Wrappers;
 
 namespace Application.Services.Identity;
 
 public interface ITokenService
 {
-    Task<TokenResponse> GetTokenAsync(TokenRequest tokenRequest);
-    Task<TokenResponse> GetRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
+    Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest);
+    Task<ResponseWrapper<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
 
 }
