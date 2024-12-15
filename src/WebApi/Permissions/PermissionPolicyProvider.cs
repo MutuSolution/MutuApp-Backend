@@ -1,7 +1,6 @@
 ﻿using Common.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Headers;
 
 namespace WebApi.Permissions;
 
@@ -13,11 +12,11 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     {
         FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
     }
- 
+
 
     public Task<AuthorizationPolicy> GetDefaultPolicyAsync()
     {
-       return FallbackPolicyProvider.GetDefaultPolicyAsync();
+        return FallbackPolicyProvider.GetDefaultPolicyAsync();
     }
 
     public Task<AuthorizationPolicy> GetFallbackPolicyAsync()

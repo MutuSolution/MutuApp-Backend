@@ -1,5 +1,4 @@
 ﻿using Common.Authorization;
-using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Permissions;
@@ -8,11 +7,11 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 {
     public PermissionAuthorizationHandler()
     {
-        
+
     }
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        if(context.User is null)
+        if (context.User is null)
         {
             await Task.CompletedTask;
         }
@@ -22,7 +21,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
             claim.Type == AppClaim.Permission &&
             claim.Value == requirement.Permission &&
             claim.Issuer == "LOCAL AUTHORITY");
-        if (permissions.Any()) 
+        if (permissions.Any())
         {
             context.Succeed(requirement);
             await Task.CompletedTask;
