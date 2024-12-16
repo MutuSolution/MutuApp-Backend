@@ -5,11 +5,10 @@ namespace WebApi.Permissions;
 
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    public PermissionAuthorizationHandler()
-    {
+    public PermissionAuthorizationHandler() { }
 
-    }
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         if (context.User is null)
         {
@@ -17,15 +16,14 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         }
 
         var permissions = context.User.Claims
-            .Where(claim =>
-            claim.Type == AppClaim.Permission &&
-            claim.Value == requirement.Permission &&
-            claim.Issuer == "LOCAL AUTHORITY");
+            .Where(claim => claim.Type == AppClaim.Permission
+                && claim.Value == requirement.Permission
+                && claim.Issuer == "LOCAL AUTHORITY");
         if (permissions.Any())
         {
             context.Succeed(requirement);
             await Task.CompletedTask;
         }
-
     }
 }
+

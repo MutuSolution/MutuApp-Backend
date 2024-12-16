@@ -4,10 +4,10 @@ public class ResponseWrapper : IResponseWrapper
 {
     public ResponseWrapper()
     {
-
     }
 
     public List<string> Messages { get; set; } = new();
+
     public bool IsSuccessful { get; set; }
 
     public static IResponseWrapper Fail()
@@ -17,20 +17,12 @@ public class ResponseWrapper : IResponseWrapper
 
     public static IResponseWrapper Fail(string message)
     {
-        return new ResponseWrapper
-        {
-            IsSuccessful = false,
-            Messages = new List<string> { message }
-        };
+        return new ResponseWrapper { IsSuccessful = false, Messages = new List<string> { message } };
     }
 
     public static IResponseWrapper Fail(List<string> messages)
     {
-        return new ResponseWrapper
-        {
-            IsSuccessful = false,
-            Messages = messages
-        };
+        return new ResponseWrapper { IsSuccessful = false, Messages = messages };
     }
 
     public static Task<IResponseWrapper> FailAsync()
@@ -55,11 +47,7 @@ public class ResponseWrapper : IResponseWrapper
 
     public static IResponseWrapper Success(string message)
     {
-        return new ResponseWrapper
-        {
-            IsSuccessful = true,
-            Messages = new List<string> { message }
-        };
+        return new ResponseWrapper { IsSuccessful = true, Messages = new List<string> { message } };
     }
 
     public static Task<IResponseWrapper> SuccessAsync()
@@ -77,8 +65,8 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
 {
     public ResponseWrapper()
     {
-
     }
+
     public T ResponseData { get; set; }
 
     public new static ResponseWrapper<T> Fail()
@@ -88,20 +76,12 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
 
     public new static ResponseWrapper<T> Fail(string message)
     {
-        return new ResponseWrapper<T>
-        {
-            IsSuccessful = false,
-            Messages = new List<string> { message }
-        };
+        return new ResponseWrapper<T> { IsSuccessful = false, Messages = new List<string> { message } };
     }
 
     public new static ResponseWrapper<T> Fail(List<string> messages)
     {
-        return new ResponseWrapper<T>()
-        {
-            IsSuccessful = false,
-            Messages = messages
-        };
+        return new ResponseWrapper<T> { IsSuccessful = false, Messages = messages };
     }
 
     public new static Task<ResponseWrapper<T>> FailAsync()
@@ -126,40 +106,22 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
 
     public new static ResponseWrapper<T> Success(string message)
     {
-        return new ResponseWrapper<T>
-        {
-            IsSuccessful = true,
-            Messages = new List<string> { message }
-        };
+        return new ResponseWrapper<T> { IsSuccessful = true, Messages = new List<string> { message } };
     }
 
     public static ResponseWrapper<T> Success(T data)
     {
-        return new ResponseWrapper<T>()
-        {
-            IsSuccessful = true,
-            ResponseData = data
-        };
+        return new ResponseWrapper<T> { IsSuccessful = true, ResponseData = data };
     }
 
     public static ResponseWrapper<T> Success(T data, string message)
     {
-        return new ResponseWrapper<T>()
-        {
-            IsSuccessful = true,
-            ResponseData = data,
-            Messages = new List<string> { message }
-        };
+        return new ResponseWrapper<T> { IsSuccessful = true, ResponseData = data, Messages = new List<string> { message } };
     }
 
     public static ResponseWrapper<T> Success(T data, List<string> messages)
     {
-        return new ResponseWrapper<T>()
-        {
-            IsSuccessful = true,
-            ResponseData = data,
-            Messages = messages
-        };
+        return new ResponseWrapper<T> { IsSuccessful = true, ResponseData = data, Messages = messages };
     }
 
     public new static Task<ResponseWrapper<T>> SuccessAsync()
@@ -181,7 +143,4 @@ public class ResponseWrapper<T> : ResponseWrapper, IResponseWrapper<T>
     {
         return Task.FromResult(Success(data, message));
     }
-
-
-
 }

@@ -6,6 +6,7 @@ using Common.Responses.Wrappers;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,8 +21,7 @@ public class TokenService : ITokenService
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly AppConfiguration _appConfiguration;
 
-    public TokenService(UserManager<ApplicationUser> userManager,
-        RoleManager<ApplicationRole> roleManager,
+    public TokenService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
         IOptions<AppConfiguration> appConfiguration)
     {
         _userManager = userManager;
@@ -31,39 +31,64 @@ public class TokenService : ITokenService
 
     public async Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest)
     {
+        // Validate user
         var user = await _userManager.FindByEmailAsync(tokenRequest.Email);
-        if (user is null) return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
-        if (!user.IsActive) return await ResponseWrapper<TokenResponse>.FailAsync("User not active.");
-        if (!user.EmailConfirmed) return await ResponseWrapper<TokenResponse>.FailAsync("Email not confirmed.");
-        var isPasswordValid = await _userManager.CheckPasswordAsync(user, tokenRequest.Password);
-        if (!isPasswordValid) return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+        // Check user
+        if (user is null)
+        {
+            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+        }
+
+        // Check if Active
+        if (!user.IsActive)
+        {
+            return await ResponseWrapper<TokenResponse>.FailAsync("User not active. Please contact the administrator");
+        }
+        // Chcek email if email confirmed
+        if (!user.EmailConfirmed)
+        {
+            return await ResponseWrapper<TokenResponse>.FailAsync("Email not confirmed.");
+        }
+        // Check password
+        var isPaswordValid = await _userManager.CheckPasswordAsync(user, tokenRequest.Password);
+        if (!isPaswordValid)
+        {
+            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+        }
+        // generate refresh token
         user.RefreshToken = GenerateRefreshToken();
         user.RefreshTokenExpiryDate = DateTime.Now.AddDays(7);
+        // Updated user
         await _userManager.UpdateAsync(user);
+
+        // generate new token
         var token = await GenerateJWTAsync(user);
+        // return
         var response = new TokenResponse
         {
             Token = token,
             RefreshToken = user.RefreshToken,
             RefreshTokenExpiryTime = user.RefreshTokenExpiryDate
         };
+
         return await ResponseWrapper<TokenResponse>.SuccessAsync(response);
     }
 
     public async Task<ResponseWrapper<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest)
     {
+
         if (refreshTokenRequest is null)
+        {
             return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Client Token.");
+        }
         var userPrincipal = GetPrincipalFromExpiredToken(refreshTokenRequest.Token);
         var userEmail = userPrincipal.FindFirstValue(ClaimTypes.Email);
         var user = await _userManager.FindByEmailAsync(userEmail);
-        if (user is null) return await ResponseWrapper<TokenResponse>.FailAsync("User Not Found.");
 
-        if (user.RefreshToken != refreshTokenRequest.RefreshToken ||
-            user.RefreshTokenExpiryDate <= DateTime.Now)
-        {
-            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Client Token");
-        }
+        if (user is null)
+            return await ResponseWrapper<TokenResponse>.FailAsync("User Not Found.");
+        if (user.RefreshToken != refreshTokenRequest.RefreshToken || user.RefreshTokenExpiryDate <= DateTime.Now)
+            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Client Token.");
 
         var token = GenerateEncrytedToken(GetSigningCredentials(), await GetClaimsAsync(user));
         user.RefreshToken = GenerateRefreshToken();
@@ -75,7 +100,6 @@ public class TokenService : ITokenService
             RefreshToken = user.RefreshToken,
             RefreshTokenExpiryTime = user.RefreshTokenExpiryDate
         };
-
         return await ResponseWrapper<TokenResponse>.SuccessAsync(response);
     }
 
@@ -84,6 +108,7 @@ public class TokenService : ITokenService
         var randomNumber = new byte[32];
         using var rnd = RandomNumberGenerator.Create();
         rnd.GetBytes(randomNumber);
+
         return Convert.ToBase64String(randomNumber);
     }
 
@@ -128,10 +153,10 @@ public class TokenService : ITokenService
         var claims = new List<Claim>
         {
             new (ClaimTypes.NameIdentifier, user.Id),
-            new (ClaimTypes.Email, user.Email),
-            new (ClaimTypes.Name, user.FirstName),
-            new (ClaimTypes.Surname, user.LastName),
-            new (ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Name, user.FirstName),
+            new(ClaimTypes.Surname, user.LastName),
+            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
         }
         .Union(userClaims)
         .Union(roleClaims)
@@ -153,12 +178,13 @@ public class TokenService : ITokenService
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        if (securityToken is not JwtSecurityToken jwtSecurityToken
+            || !jwtSecurityToken.Header.Alg
+            .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new SecurityTokenException("Invalid token.");
+            throw new SecurityTokenException("Invalid token");
         }
+
         return principal;
     }
-
 }

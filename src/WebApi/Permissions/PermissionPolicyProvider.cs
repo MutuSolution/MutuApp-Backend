@@ -13,17 +13,6 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
     }
 
-
-    public Task<AuthorizationPolicy> GetDefaultPolicyAsync()
-    {
-        return FallbackPolicyProvider.GetDefaultPolicyAsync();
-    }
-
-    public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
-    {
-        return Task.FromResult<AuthorizationPolicy>(null);
-    }
-
     public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
     {
         if (policyName.StartsWith(AppClaim.Permission, StringComparison.CurrentCultureIgnoreCase))
@@ -34,4 +23,10 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         }
         return FallbackPolicyProvider.GetPolicyAsync(policyName);
     }
+
+    public Task<AuthorizationPolicy> GetDefaultPolicyAsync()
+        => FallbackPolicyProvider.GetDefaultPolicyAsync();
+
+    public Task<AuthorizationPolicy> GetFallbackPolicyAsync()
+        => Task.FromResult<AuthorizationPolicy>(null);
 }

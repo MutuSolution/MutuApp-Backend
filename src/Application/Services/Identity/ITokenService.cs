@@ -8,5 +8,5 @@ public interface ITokenService
 {
     Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest);
     Task<ResponseWrapper<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
-
 }
+

@@ -1,14 +1,25 @@
+using Application;
 using Infrastructure;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(o =>
+    o.AddPolicy("Mutulink Admin", builder =>
+    {
+        builder
+        .AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    }
+    ));
 
 builder.Services.AddControllers();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentitySettings();
+builder.Services.AddApplicationServices();
+builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
+builder.Services.AddIdentityServices();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.RegisterSwagger();
 
 var app = builder.Build();
 
@@ -21,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("Mutulink Admin");
 app.UseAuthorization();
 
 app.MapControllers();
