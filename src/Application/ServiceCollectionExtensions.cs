@@ -6,10 +6,13 @@ namespace Application;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this
+        IServiceCollection services)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        return services.AddMediatR(assembly);
+        return services
+            .AddMediatR(assembly)
+            .AddAutoMapper(assembly);
     }
 
 }

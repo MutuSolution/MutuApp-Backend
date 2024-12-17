@@ -16,8 +16,13 @@ builder.Services.AddControllers();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentitySettings();
 builder.Services.AddApplicationServices();
-builder.Services.AddJwtAuthentication(builder.Services.GetApplicationSettings(builder.Configuration));
+
+builder.Services
+    .AddJwtAuthentication(builder.Services
+    .GetApplicationSettings(builder.Configuration));
+
 builder.Services.AddIdentityServices();
+builder.Services.AddEmployeeService();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterSwagger();
 

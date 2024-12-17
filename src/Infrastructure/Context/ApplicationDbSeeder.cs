@@ -42,8 +42,8 @@ public class ApplicationDbSeeeder
         string adminUserName = AppCredentials.Email[..AppCredentials.Email.IndexOf('@')].ToLowerInvariant();
         var adminUser = new ApplicationUser
         {
-            FirstName = "Junior",
-            LastName = "Matlou",
+            FirstName = "Yunus",
+            LastName = "Gündüz",
             Email = AppCredentials.Email,
             UserName = adminUserName,
             EmailConfirmed = true,
@@ -72,18 +72,18 @@ public class ApplicationDbSeeeder
     {
         var basicUser = new ApplicationUser
         {
-            FirstName = "John",
-            LastName = "Doe",
-            Email = "johnd@abc.com",
-            UserName = "johnd",
+            FirstName = "Mustafa",
+            LastName = "Toprak",
+            Email = "mustafa@mail.com",
+            UserName = "mustafatoprak",
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
-            NormalizedEmail = "JOHND@ABC.COM",
-            NormalizedUserName = "JOHND",
+            NormalizedEmail = "MUSTAFA@MAIL.COM",
+            NormalizedUserName = "MUSTAFATOPRAK",
             IsActive = true
         };
 
-        if (!await _userManager.Users.AnyAsync(u => u.Email == "johnd@abc.com"))
+        if (!await _userManager.Users.AnyAsync(u => u.Email == "mustafa@mail.com"))
         {
             var password = new PasswordHasher<ApplicationUser>();
             basicUser.PasswordHash = password.HashPassword(basicUser, AppCredentials.Password);
