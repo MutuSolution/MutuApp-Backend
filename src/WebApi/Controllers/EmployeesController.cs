@@ -2,9 +2,7 @@
 using Application.Features.Employees.Queries;
 using Common.Authorization;
 using Common.Requests.Employees;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
 using WebApi.Attributes;
 
 namespace WebApi.Controllers;

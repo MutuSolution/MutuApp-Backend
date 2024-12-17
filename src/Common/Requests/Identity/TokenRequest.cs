@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
 
-namespace Common.Requests;
+namespace Common.Requests.Identity;
 
 public class TokenRequest
 {

@@ -23,8 +23,11 @@ builder.Services
 
 builder.Services.AddIdentityServices();
 builder.Services.AddEmployeeService();
+builder.Services.AddInfrastructureDependencies();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterSwagger();
+
 
 var app = builder.Build();
 

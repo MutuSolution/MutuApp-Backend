@@ -5,11 +5,6 @@ using Common.Responses.Employees;
 using Common.Responses.Wrappers;
 using Domain;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Employees.Commands;
 
@@ -34,7 +29,7 @@ public class CreateEmployeeCommandHandler :
     {
         var mappedEmployee = _mapper.Map<Employee>(request.CreateEmployeeRequest);
         var newEmployee = await _employeeService.CreateEmployeeAsync(mappedEmployee);
-        if (newEmployee.Id>0)
+        if (newEmployee.Id > 0)
         {
             var mappedNewEmployee = _mapper.Map<EmployeeResponse>(newEmployee);
             return await ResponseWrapper<EmployeeResponse>

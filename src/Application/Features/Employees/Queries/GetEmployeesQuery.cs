@@ -3,11 +3,6 @@ using AutoMapper;
 using Common.Responses.Employees;
 using Common.Responses.Wrappers;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Employees.Queries;
 
@@ -27,11 +22,11 @@ public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, IResp
         _mapper = mapper;
     }
 
-    public async Task<IResponseWrapper> Handle(GetEmployeesQuery request, 
+    public async Task<IResponseWrapper> Handle(GetEmployeesQuery request,
         CancellationToken cancellationToken)
     {
         var employeeList = await _employeeService.GetEmployeeListAsync();
-        if(employeeList.Count > 0)
+        if (employeeList.Count > 0)
         {
             var mappedEmployeeList = _mapper.Map<List<EmployeeResponse>>(employeeList);
             return await ResponseWrapper<List<EmployeeResponse>>

@@ -3,11 +3,6 @@ using AutoMapper;
 using Common.Responses.Employees;
 using Common.Responses.Wrappers;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Employees.Queries;
 
@@ -16,7 +11,7 @@ public class GetEmployeeByIdQuery : IRequest<IResponseWrapper>
     public int EmployeeId { get; set; }
 }
 
-public class GetEmployeeByIdQueryHandler : 
+public class GetEmployeeByIdQueryHandler :
     IRequestHandler<GetEmployeeByIdQuery, IResponseWrapper>
 {
     private readonly IEmployeeService _employeeService;
