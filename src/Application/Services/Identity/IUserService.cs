@@ -7,4 +7,6 @@ public interface IUserService
 {
     Task<IResponseWrapper> RegisterUserAsync(UserRegistrationRequest request);
     Task<IResponseWrapper> GetUserByIdAsync(string userId);
+    Task<IResponseWrapper> GetAllUsersAsync();
+    Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request);
 }

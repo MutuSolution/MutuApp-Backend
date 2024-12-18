@@ -26,4 +26,19 @@ public class UsersController : MyBaseController<UsersController>
         return NotFound(response);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var response = await MediatorSender.Send(new GetAllUsersQuery());
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserRequest userRequest)
+    {
+        var response = await MediatorSender.Send(new UpdateUserCommand { UpdateUser = userRequest });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
 }

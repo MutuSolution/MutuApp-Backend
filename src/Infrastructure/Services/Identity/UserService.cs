@@ -6,6 +6,7 @@ using Common.Responses.Identity;
 using Common.Responses.Wrappers;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services.Identity;
 
@@ -21,6 +22,14 @@ public class UserService : IUserService
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
+    }
+
+    public async Task<IResponseWrapper> GetAllUsersAsync()
+    {
+        var userInDb = await _userManager.Users.ToListAsync();
+        if (userInDb.Count <= 0) return await ResponseWrapper.FailAsync("No users were found.");
+        var mappedUsers = _mapper.Map<List<UserResponse>>(userInDb);
+        return await ResponseWrapper<List<UserResponse>>.SuccessAsync(mappedUsers);
     }
 
     public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
@@ -68,5 +77,20 @@ public class UserService : IUserService
         {
             return await ResponseWrapper.FailAsync("User registration failed.");
         }
+    }
+
+    public async Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request)
+    {
+        var userInDb = await _userManager.FindByIdAsync(request.UserId);
+        if (userInDb is null) return await ResponseWrapper.FailAsync("User does not exist.");
+
+        userInDb.FirstName = request.FirstName;
+        userInDb.LastName = request.LastName;
+
+        var identityResult = await _userManager.UpdateAsync(userInDb);
+        if (identityResult.Succeeded)
+            return await ResponseWrapper<string>.SuccessAsync("User details successfully updated.");
+
+        return await ResponseWrapper.FailAsync("Failed to update user details.");
     }
 }
