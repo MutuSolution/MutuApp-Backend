@@ -12,4 +12,5 @@ public interface IUserService
     Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request);
     Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request);
     Task<IResponseWrapper> GetRolesAsync(string userId);
+    Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRolesRequest request);
 }

@@ -7,6 +7,7 @@ using Common.Responses.Wrappers;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace Infrastructure.Services.Identity;
 
@@ -14,14 +15,18 @@ public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
 
     public UserService(UserManager<ApplicationUser> userManager,
-        RoleManager<ApplicationRole> roleManager, IMapper mapper)
+        RoleManager<ApplicationRole> roleManager,
+        IMapper mapper,
+        ICurrentUserService currentUserService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
+        _currentUserService = currentUserService;
     }
 
     public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request)
@@ -69,15 +74,14 @@ public class UserService : IUserService
         var userInDb = await _userManager.FindByIdAsync(userId);
         if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
 
-        var allRoles = await _roleManager.Roles.ToListAsync(); 
+        var allRoles = await _roleManager.Roles.ToListAsync();
         if (allRoles == null) return await ResponseWrapper.FailAsync("Role not found.");
 
         foreach (var role in allRoles)
         {
             var userRoleVM = new UserRoleViewModel
             {
-                RoleName = role.Name,
-                RoleDescription = role.Description
+                RoleName = role.Name
             };
 
             if (await _userManager.IsInRoleAsync(userInDb, role.Name))
@@ -154,7 +158,37 @@ public class UserService : IUserService
 
         return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
-   
+
+    public async Task<IResponseWrapper> UpdateUserRolesAsync(UpdateUserRolesRequest request)
+    {
+        var userInDb = await _userManager.FindByIdAsync(request.UserId);
+        if (userInDb is null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb.Email == AppCredentials.Email)
+            return await ResponseWrapper.FailAsync("User roles update not permitted.");
+
+        var currentLoggedInUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
+        if (currentLoggedInUser is null)
+            return await ResponseWrapper.FailAsync("Logged in user does not exist.");
+
+        if (!await _userManager.IsInRoleAsync(currentLoggedInUser, AppRoles.Admin))
+            return await ResponseWrapper.FailAsync("User not permitted.");
+
+        var currentAssignedRoles = await _userManager.GetRolesAsync(userInDb);
+        var removingRolesResult = await _userManager.RemoveFromRolesAsync(userInDb, currentAssignedRoles);
+        if (!removingRolesResult.Succeeded)
+            return await ResponseWrapper
+                .FailAsync(GetIdentityResultErrorDescriptions(removingRolesResult));
+
+        var rolesToBeAssigned = request.Roles.Where(role => role.IsAssignedToUser == true).ToList();
+        var assigningResult = await _userManager
+             .AddToRolesAsync(userInDb, rolesToBeAssigned.Select(role => role.RoleName));
+        if (!assigningResult.Succeeded)
+            return await ResponseWrapper
+                .FailAsync(GetIdentityResultErrorDescriptions(assigningResult));
+
+        return await ResponseWrapper<string>.SuccessAsync("User roles updated successfully.");
+    }
+
     private List<string> GetIdentityResultErrorDescriptions(IdentityResult identityResult)
     {
         var errorDescriptions = new List<string>();
