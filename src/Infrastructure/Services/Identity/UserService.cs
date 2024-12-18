@@ -39,6 +39,22 @@ public class UserService : IUserService
         return await ResponseWrapper<string>.SuccessAsync("User password changed.");
     }
 
+    public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request)
+    {
+        var userInDb = await _userManager.FindByIdAsync(request.UserId);
+        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+
+        userInDb.IsActive = request.Activate;
+        var identityResult = await _userManager.UpdateAsync(userInDb);
+        if (identityResult.Succeeded)
+            return await ResponseWrapper<string>
+                .SuccessAsync(request.Activate ?
+                "User activated successfully." : "User de-activated successfully");
+
+        return await ResponseWrapper.FailAsync(request.Activate ?
+                "Failed to activate user." : "Failed to de-activate user.");
+    }
+
     public async Task<IResponseWrapper> GetAllUsersAsync()
     {
         var userInDb = await _userManager.Users.ToListAsync();

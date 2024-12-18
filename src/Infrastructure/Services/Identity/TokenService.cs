@@ -41,7 +41,8 @@ public class TokenService : ITokenService
         // Check if Active
         if (!user.IsActive)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("User not active. Please contact the administrator");
+            return await ResponseWrapper<TokenResponse>
+                .FailAsync("User not active. Please contact the administrator");
         }
         // Chcek email if email confirmed
         if (!user.EmailConfirmed)
