@@ -1,13 +1,8 @@
 ﻿using Application.Services.Identity;
 using Common.Responses.Wrappers;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Features.Identity.Queries;
+namespace Application.Features.Identity.Users.Queries;
 
 public class GetRolesQuery : IRequest<IResponseWrapper>
 {

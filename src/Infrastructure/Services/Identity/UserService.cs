@@ -7,7 +7,6 @@ using Common.Responses.Wrappers;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace Infrastructure.Services.Identity;
 
@@ -174,6 +173,10 @@ public class UserService : IUserService
             return await ResponseWrapper.FailAsync("User not permitted.");
 
         var currentAssignedRoles = await _userManager.GetRolesAsync(userInDb);
+        var roleExist = await _roleManager.FindByNameAsync(currentAssignedRoles.FirstOrDefault());
+        if (roleExist is null)
+            return await ResponseWrapper.FailAsync("Role does not exist.");//YG!
+
         var removingRolesResult = await _userManager.RemoveFromRolesAsync(userInDb, currentAssignedRoles);
         if (!removingRolesResult.Succeeded)
             return await ResponseWrapper
