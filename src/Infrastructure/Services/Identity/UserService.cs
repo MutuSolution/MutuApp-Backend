@@ -62,6 +62,37 @@ public class UserService : IUserService
         return await ResponseWrapper<List<UserResponse>>.SuccessAsync(mappedUsers);
     }
 
+    public async Task<IResponseWrapper> GetRolesAsync(string userId)
+    {
+        var userRolesVM = new List<UserRoleViewModel>();
+
+        var userInDb = await _userManager.FindByIdAsync(userId);
+        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+
+        var allRoles = await _roleManager.Roles.ToListAsync(); 
+        if (allRoles == null) return await ResponseWrapper.FailAsync("Role not found.");
+
+        foreach (var role in allRoles)
+        {
+            var userRoleVM = new UserRoleViewModel
+            {
+                RoleName = role.Name,
+                RoleDescription = role.Description
+            };
+
+            if (await _userManager.IsInRoleAsync(userInDb, role.Name))
+            {
+                userRoleVM.IsAssignedToUser = true;
+            }
+            else
+            {
+                userRoleVM.IsAssignedToUser = false;
+            }
+            userRolesVM.Add(userRoleVM);
+        }
+        return await ResponseWrapper<List<UserRoleViewModel>>.SuccessAsync(userRolesVM);
+    }
+
     public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
     {
         var userInDb = await _userManager.FindByIdAsync(userId);

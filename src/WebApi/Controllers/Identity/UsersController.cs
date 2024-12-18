@@ -1,5 +1,6 @@
 ﻿using Application.Features.Identity.Commands;
 using Application.Features.Identity.Queries;
+using Azure.Core;
 using Common.Requests.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,6 +55,14 @@ public class UsersController : MyBaseController<UsersController>
     public async Task<IActionResult> ChangeUserStatus([FromBody] ChangeUserStatusRequest request)
     {
         var response = await MediatorSender.Send(new ChangeUserStatusCommand { ChangeUserStatus = request });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpGet("roles/{userId}")]
+    public async Task<IActionResult> GetRoles(string userId)
+    {
+        var response = await MediatorSender.Send(new GetRolesQuery { UserId = userId });
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
