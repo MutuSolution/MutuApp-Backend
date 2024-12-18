@@ -35,7 +35,7 @@ public class UserService : IUserService
         var identityResult = await _userManager
             .ChangePasswordAsync(userInDb, request.CurrentPassword, request.NewPassword);
         if (!identityResult.Succeeded)
-            return await ResponseWrapper.FailAsync("Failed changing password.");
+            return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
         return await ResponseWrapper<string>.SuccessAsync("User password changed.");
     }
 
@@ -51,8 +51,7 @@ public class UserService : IUserService
                 .SuccessAsync(request.Activate ?
                 "User activated successfully." : "User de-activated successfully");
 
-        return await ResponseWrapper.FailAsync(request.Activate ?
-                "Failed to activate user." : "Failed to de-activate user.");
+        return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
 
     public async Task<IResponseWrapper> GetAllUsersAsync()
@@ -106,7 +105,7 @@ public class UserService : IUserService
         }
         else
         {
-            return await ResponseWrapper.FailAsync("User registration failed.");
+            return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
         }
     }
 
@@ -122,6 +121,17 @@ public class UserService : IUserService
         if (identityResult.Succeeded)
             return await ResponseWrapper<string>.SuccessAsync("User details successfully updated.");
 
-        return await ResponseWrapper.FailAsync("Failed to update user details.");
+        return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
+   
+    private List<string> GetIdentityResultErrorDescriptions(IdentityResult identityResult)
+    {
+        var errorDescriptions = new List<string>();
+        foreach (var error in identityResult.Errors)
+        {
+            errorDescriptions.Add(error.Description);
+        }
+        return errorDescriptions;
+    }
+
 }
