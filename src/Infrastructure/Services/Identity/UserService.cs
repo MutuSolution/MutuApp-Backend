@@ -24,6 +24,21 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
+    public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request)
+    {
+        if (request.NewPassword != request.ConfirmedNewPassword)
+            return ResponseWrapper.Fail("New passwords must be equal.");
+
+        var userInDb = await _userManager.FindByIdAsync(request.UserId);
+        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+
+        var identityResult = await _userManager
+            .ChangePasswordAsync(userInDb, request.CurrentPassword, request.NewPassword);
+        if (!identityResult.Succeeded)
+            return await ResponseWrapper.FailAsync("Failed changing password.");
+        return await ResponseWrapper<string>.SuccessAsync("User password changed.");
+    }
+
     public async Task<IResponseWrapper> GetAllUsersAsync()
     {
         var userInDb = await _userManager.Users.ToListAsync();

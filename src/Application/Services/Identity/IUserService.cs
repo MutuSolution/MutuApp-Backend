@@ -9,4 +9,5 @@ public interface IUserService
     Task<IResponseWrapper> GetUserByIdAsync(string userId);
     Task<IResponseWrapper> GetAllUsersAsync();
     Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request);
+    Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request);
 }

@@ -41,4 +41,12 @@ public class UsersController : MyBaseController<UsersController>
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
+
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangeUserPassword([FromBody] ChangePasswordRequest request)
+    {
+        var response = await MediatorSender.Send(new ChangeUserPasswordCommand { ChangePassword = request });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
 }
