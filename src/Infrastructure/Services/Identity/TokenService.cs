@@ -174,6 +174,7 @@ public class TokenService : ITokenService
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appConfiguration.Secret)),
             ValidateIssuer = false,
             ValidateAudience = false,
+            ValidateLifetime = false,//YG! bu satırı kendim ekledim
             RoleClaimType = ClaimTypes.Role,
             ClockSkew = TimeSpan.Zero
         };

@@ -29,17 +29,24 @@ public class AppPermissions
             new(AppFeature.Roles, AppAction.Update, AppRoleGroup.SystemAccess, "Update Roles"),
             new(AppFeature.Roles, AppAction.Delete, AppRoleGroup.SystemAccess, "Delete Roles"),
 
-            new(AppFeature.RoleClaims, AppAction.Read, AppRoleGroup.SystemAccess, "Read Role Claims/Permissions"),
-            new(AppFeature.RoleClaims, AppAction.Update, AppRoleGroup.SystemAccess, "Update Role Claims/Permissions"),
+            new(AppFeature.RoleClaims, AppAction.Read, AppRoleGroup.SystemAccess,
+                "Read Role Claims/Permissions"),
+            new(AppFeature.RoleClaims, AppAction.Update, AppRoleGroup.SystemAccess, 
+                "Update Role Claims/Permissions"),
 
-            new(AppFeature.Employees, AppAction.Read, AppRoleGroup.ManagementHierarchy, "Read Employees", IsBasic: true),
-            new(AppFeature.Employees, AppAction.Create, AppRoleGroup.ManagementHierarchy, "Create Employees"),
-            new(AppFeature.Employees, AppAction.Update, AppRoleGroup.ManagementHierarchy, "Update Employees"),
-            new(AppFeature.Employees, AppAction.Delete, AppRoleGroup.ManagementHierarchy, "Delete Employees")
+            new(AppFeature.Employees, AppAction.Read, AppRoleGroup.ManagementHierarchy, 
+                "Read Employees", IsBasic: true),
+            new(AppFeature.Employees, AppAction.Create, AppRoleGroup.ManagementHierarchy, 
+                "Create Employees"),
+            new(AppFeature.Employees, AppAction.Update, AppRoleGroup.ManagementHierarchy, 
+                "Update Employees"),
+            new(AppFeature.Employees, AppAction.Delete, AppRoleGroup.ManagementHierarchy, 
+                "Delete Employees")
     };
 
     public static IReadOnlyList<AppPermission> AdminPermissions { get; } =
-        new ReadOnlyCollection<AppPermission>(_all.Where(p => !p.IsBasic).ToArray());
+       new ReadOnlyCollection<AppPermission>(_all).ToArray();
+      //  new ReadOnlyCollection<AppPermission>(_all.Where(p => !p.IsBasic).ToArray()); //YG!
 
     public static IReadOnlyList<AppPermission> BasicPermissions { get; } =
         new ReadOnlyCollection<AppPermission>(_all.Where(p => p.IsBasic).ToArray());

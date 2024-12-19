@@ -4,6 +4,7 @@ using Common.Authorization;
 using Common.Requests.Identity;
 using Common.Responses.Identity;
 using Common.Responses.Wrappers;
+using Infrastructure.Context;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,18 @@ public class RoleService : IRoleService
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly ApplicationDbContext _dbContext;
 
-    public RoleService(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, IMapper mapper)
+    public RoleService(
+        RoleManager<ApplicationRole> roleManager,
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper,
+        ApplicationDbContext dbContext)
     {
         _roleManager = roleManager;
         _userManager = userManager;
         _mapper = mapper;
+        _dbContext = dbContext;
     }
 
     public async Task<IResponseWrapper> CreateRoleAsync(CreateRoleRequest request)
@@ -46,7 +53,7 @@ public class RoleService : IRoleService
     public async Task<IResponseWrapper> DeleteRoleAsync(string roleId)
     {
         var roleInDb = await _roleManager.FindByIdAsync(roleId);
-        if (roleInDb is null) 
+        if (roleInDb is null)
             return await ResponseWrapper.FailAsync("Role does not exist.");
         if (roleInDb.Name == AppRoles.Admin)
             return await ResponseWrapper.FailAsync("Role delete not permitted.");
@@ -77,10 +84,64 @@ public class RoleService : IRoleService
         return await ResponseWrapper<RoleResponse>.SuccessAsync(mappedRole);
     }
 
+    public async Task<IResponseWrapper> GetRolePermissionsAsync(string roleId)
+    {
+        var roleInDb = await _roleManager.FindByIdAsync(roleId);
+        if (roleInDb is null)
+            return await ResponseWrapper<RoleClaimResponse>.FailAsync("No role was found.");
+
+        var allPermissions = AppPermissions.AllPermissions;
+        var roleClaimResponse = new RoleClaimResponse
+        {
+            Role = new()
+            {
+                Id = roleId,
+                Name = roleInDb.Name,
+                Description = roleInDb.Description,
+            },
+            RoleClaims = new()
+        };
+        var currentRoleClaims = await GetAllClaimsForRoleAsync(roleId);
+        var allPermissionsNames = allPermissions.Select(x => x.Name).ToList();
+        var currentRoleClaimsValues = currentRoleClaims.Select(x => x.ClaimValue).ToList();
+        var currentlyAssignedRoleClaimsNames = allPermissionsNames
+            .Intersect(currentRoleClaimsValues).ToList();
+
+        foreach (var permission in allPermissions)
+        {
+            var claimAndNameCheck = currentlyAssignedRoleClaimsNames
+                .Any(roleClaims => roleClaims == permission.Name);
+
+            roleClaimResponse.RoleClaims.Add(new RoleClaimViewModel
+            {
+                RoleId = roleId,
+                ClaimType = AppClaim.Permission,
+                ClaimValue = permission.Name,
+                Description = permission.Description,
+                Group = permission.Group,
+                IsAssignedToRole = claimAndNameCheck ? true : false
+            });
+        }
+
+        return await ResponseWrapper<RoleClaimResponse>.SuccessAsync(roleClaimResponse);
+    }
+
+    //helper function
+    private async Task<List<RoleClaimViewModel>> GetAllClaimsForRoleAsync(string roleId)
+    {
+        var roleClaims = await _dbContext.RoleClaims
+            .Where(claims => claims.RoleId == roleId).ToListAsync();
+        if (roleClaims.Count < 1)
+            return new List<RoleClaimViewModel>();
+
+        var mappedRoleClaims = _mapper.Map<List<RoleClaimViewModel>>(roleClaims);
+        return mappedRoleClaims;
+    }
+
     public async Task<IResponseWrapper> GetRolesAsync()
     {
         var allRoles = await _roleManager.Roles.ToListAsync();
-        if (allRoles.Count < 1) 
+        if (allRoles.Count < 1)
             return await ResponseWrapper<string>.FailAsync("No roles were found.");
 
         var mappedRoles = _mapper.Map<List<RoleResponse>>(allRoles);
@@ -90,7 +151,7 @@ public class RoleService : IRoleService
     public async Task<IResponseWrapper> UpdateRoleAsync(UpdateRoleRequest request)
     {
         var roleInDb = await _roleManager.FindByIdAsync(request.RoleId);
-        if (roleInDb is null) 
+        if (roleInDb is null)
             return await ResponseWrapper.FailAsync("Role does not exist");
         if (roleInDb.Name == AppRoles.Admin)
             return await ResponseWrapper.FailAsync("Role update not permitted.");

@@ -64,5 +64,17 @@ namespace WebApi.Controllers.Identity
             if (response.IsSuccessful) return Ok(response);
             return BadRequest(response);
         }
+
+        [HttpGet("permissions/{roleId}")]
+        [MustHavePermission(AppFeature.RoleClaims, AppAction.Read)]
+        public async Task<IActionResult> GetPermissions(string roleId)
+        {
+            var response = await MediatorSender.Send(new GetPermissionsQuery { RoleId = roleId });
+            if (response.IsSuccessful)
+            {
+                return Ok(response);
+            }
+            return NotFound(response);
+        }
     }
 }
