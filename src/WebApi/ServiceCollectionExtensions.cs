@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
@@ -53,6 +54,7 @@ namespace WebApi
 
         internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services, AppConfiguration config)
         {
+            JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
             var key = Encoding.ASCII.GetBytes(config.Secret);
             services
                 .AddAuthentication(authentication =>

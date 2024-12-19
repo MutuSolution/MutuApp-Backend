@@ -144,7 +144,7 @@ public class TokenService : ITokenService
 
         foreach (var role in roles)
         {
-            roleClaims.Add(new Claim(ClaimTypes.Role, role));
+            roleClaims.Add(new Claim("role", role));
             var currentRole = await _roleManager.FindByNameAsync(role);
             var allPermissionsForCurrentRole = await _roleManager.GetClaimsAsync(currentRole);
             permissionClaims.AddRange(allPermissionsForCurrentRole);
@@ -152,11 +152,12 @@ public class TokenService : ITokenService
 
         var claims = new List<Claim>
         {
-            new (ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Name, user.FirstName),
-            new(ClaimTypes.Surname, user.LastName),
-            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+        new ("id", user.Id), // ClaimTypes.NameIdentifier yerine kısa "id"
+        new("email", user.Email), // ClaimTypes.Email yerine kısa "email"
+        new("name", user.FirstName), // ClaimTypes.Name yerine kısa "name"
+        new("surname", user.LastName), // ClaimTypes.Surname yerine kısa "surname"
+        new("username", user.UserName), // ClaimTypes.Surname yerine kısa "surname"
+        new("phone", user.PhoneNumber ?? string.Empty) // ClaimTypes.MobilePhone yerine kısa "phone"
         }
         .Union(userClaims)
         .Union(roleClaims)

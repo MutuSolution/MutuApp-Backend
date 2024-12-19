@@ -9,5 +9,6 @@ internal class MappingProfiles : Profile
     public MappingProfiles()
     {
         CreateMap<ApplicationUser, UserResponse>();
+        CreateMap<ApplicationRole, RoleResponse>();
     }
 }
