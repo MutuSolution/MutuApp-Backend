@@ -2,21 +2,16 @@
 using Common.Requests.Employees;
 using Domain;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Features.Validators;
+namespace Application.Features.Employees.Validators;
 
 public class UpdateEmployeeRequestValidator : AbstractValidator<UpdateEmployeeRequest>
 {
     public UpdateEmployeeRequestValidator(IEmployeeService employeeService)
     {
         RuleFor(x => x.Id)
-            .MustAsync(async (id, y) => await employeeService.GetEmployeeByIdAsync(id)
-            is Employee employeInDb && employeInDb.Id == id)
+            .MustAsync(async (id, cancellation) => await employeeService
+            .GetEmployeeByIdAsync(id) is not Employee existing)
             .WithMessage("Employee does not exit.");
 
         RuleFor(x => x.FirstName)
@@ -29,9 +24,6 @@ public class UpdateEmployeeRequestValidator : AbstractValidator<UpdateEmployeeRe
 
         RuleFor(x => x.Email)
         .EmailAddress()
-        .NotEmpty()
-        .WithMessage("Employee email is required.");
-
-
+        .NotEmpty();
     }
 }

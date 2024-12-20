@@ -1,5 +1,4 @@
-﻿using Application.Exceptions;
-using Common.Responses.Wrappers;
+﻿using Common.Responses.Wrappers;
 using FluentValidation;
 using MediatR;
 

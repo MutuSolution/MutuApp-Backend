@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Common.Responses;
+using Common.Responses.Wrappers;
 using System.Net;
 using System.Text.Json;
 
@@ -24,22 +25,21 @@ public class ErrorHandlingMiddleware
         {
             var response = httpContext.Response;
             response.ContentType = "application/json";
-            Error error = new();
+
+            var responseWrapper = await ResponseWrapper.FailAsync(ex.Message);
+
             switch (ex)
             {
                 case CustomValidationException customValidationException:
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    error.FriendlyErrorMessage = customValidationException.FriendlyErrorMessage;
-                    error.ErrorMessages = customValidationException.ErrorMessages;
                     break;
 
                 default:
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    error.FriendlyErrorMessage = ex.Message;
                     break;
             }
 
-            var result = JsonSerializer.Serialize(error);
+            var result = JsonSerializer.Serialize(responseWrapper);
             await response.WriteAsync(result);
         }
     }

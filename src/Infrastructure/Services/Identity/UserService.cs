@@ -96,6 +96,26 @@ public class UserService : IUserService
         return await ResponseWrapper<List<UserRoleViewModel>>.SuccessAsync(userRolesVM);
     }
 
+    public async Task<IResponseWrapper<UserResponse>> GetUserByEmailAsync(string email)
+    {
+        var userInDb = await _userManager.FindByEmailAsync(email);
+        if (userInDb == null)
+            return await ResponseWrapper<UserResponse>.FailAsync("User not found.");
+
+        var mappedUser = _mapper.Map<UserResponse>(userInDb);
+        return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
+    }
+
+    public async Task<IResponseWrapper<UserResponse>> GetUserByUserNameAsync(string username)
+    {
+        var userInDb = await _userManager.FindByNameAsync(username);
+        if (userInDb == null)
+            return await ResponseWrapper<UserResponse>.FailAsync("User not found.");
+
+        var mappedUser = _mapper.Map<UserResponse>(userInDb);
+        return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
+    }
+
     public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
     {
         var userInDb = await _userManager.FindByIdAsync(userId);
