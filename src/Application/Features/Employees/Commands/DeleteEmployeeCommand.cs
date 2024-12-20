@@ -19,19 +19,17 @@ public class DeleteEmployeeCommandHandler :
         _employeeService = employeeService;
     }
 
-    async Task<IResponseWrapper> IRequestHandler<DeleteEmployeeCommand, IResponseWrapper>.Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<IResponseWrapper> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employeeInDb = await _employeeService.GetEmployeeByIdAsync(request.EmployeeId);
         if (employeeInDb is not null)
         {
             var employeeId = await _employeeService.DeleteEmployeeAsync(employeeInDb);
-            return await ResponseWrapper<int>
-                .SuccessAsync(employeeId, "Employee entry deleted successfully.");
+            return await ResponseWrapper<int>.SuccessAsync(employeeId, "Employee entry deleted successfully.");
         }
         else
         {
             return await ResponseWrapper.FailAsync("Employee does not exist.");
         }
-
     }
 }
