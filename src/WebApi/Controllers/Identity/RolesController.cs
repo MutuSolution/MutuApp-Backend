@@ -76,5 +76,17 @@ namespace WebApi.Controllers.Identity
             }
             return NotFound(response);
         }
+
+        [HttpPut("update-permissions")]
+        [MustHavePermission(AppFeature.RoleClaims, AppAction.Update)]
+        public async Task<IActionResult> UpdateRolePermissions([FromBody] UpdateRolePermissionsRequest updateRolePermissionsRequest)
+        {
+            var response = await MediatorSender.Send(new UpdateRolePermissionsCommand
+            {
+                UpdateRolePermissions = updateRolePermissionsRequest
+            });
+            if (response.IsSuccessful) return Ok();
+            return BadRequest(response);
+        }
     }
 }

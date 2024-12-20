@@ -6,9 +6,19 @@ namespace Infrastructure.Services.Identity;
 
 public class CurrentUserService : ICurrentUserService
 {
-    public string UserId { get; }
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
-        UserId = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier).Value;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public string UserId
+    {
+        get
+        {
+            return _httpContextAccessor.HttpContext?.User?
+                .FindFirst("id")?.Value ?? "0";
+        }
     }
 }

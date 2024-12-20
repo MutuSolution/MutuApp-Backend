@@ -152,7 +152,7 @@ public class RoleService : IRoleService
     {
         var roleInDb = await _roleManager.FindByIdAsync(request.RoleId);
         if (roleInDb is null)
-            return await ResponseWrapper.FailAsync("Role does not exist");
+            return await ResponseWrapper.FailAsync("Role does not exist.");
         if (roleInDb.Name == AppRoles.Admin)
             return await ResponseWrapper.FailAsync("Role update not permitted.");
 
@@ -176,5 +176,28 @@ public class RoleService : IRoleService
             errorDescriptions.Add(error.Description);
         }
         return errorDescriptions;
+    }
+
+    public async Task<IResponseWrapper> UpdateRolePermissionsAsync(UpdateRolePermissionsRequest request)
+    {
+        var roleInDb = await _roleManager.FindByIdAsync(request.RoleId);
+        if (roleInDb is null)
+            return await ResponseWrapper.FailAsync("Role does not exist.");
+        if (roleInDb.Name == AppRoles.Admin)
+            return await ResponseWrapper.FailAsync("Changing role permission is not allowed.");
+        var permissionsToBeAssigned = request.RoleClaims
+            .Where(x => x.IsAssignedToRole == true).ToList();
+        var currentlyAssignedClaims = await _roleManager.GetClaimsAsync(roleInDb);
+        foreach (var claim in currentlyAssignedClaims)
+        {
+            await _roleManager.RemoveClaimAsync(roleInDb, claim);
+        }
+        foreach (var claim in permissionsToBeAssigned)
+        {
+            var mappedRoleClaim = _mapper.Map<ApplicationRoleClaim>(claim);
+            await _dbContext.RoleClaims.AddAsync(mappedRoleClaim);
+        }
+        await _dbContext.SaveChangesAsync();
+        return await ResponseWrapper<string>.SuccessAsync("Role permissions updated successfully.");
     }
 }

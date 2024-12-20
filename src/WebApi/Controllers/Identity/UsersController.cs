@@ -78,10 +78,13 @@ public class UsersController : MyBaseController<UsersController>
 
     [HttpPut("user-roles")]
     [MustHavePermission(AppFeature.Users, AppAction.Update)]
-    public async Task<IActionResult> UpdateUserRoles([FromBody] UpdateUserRolesRequest rolesRequest)
+    public async Task<IActionResult> UpdateUserRoles([FromBody] UpdateUserRolesRequest updateUserRoles)
     {
-        var response = await MediatorSender.Send(new UpdateUserRoleCommand { UpdateUserRoles = rolesRequest });
+        var response = await MediatorSender.Send(new UpdateUserRolesCommand
+        {
+            UpdateUserRoles = updateUserRoles
+        });
         if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
+        return BadRequest(response);
     }
 }
