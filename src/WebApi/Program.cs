@@ -23,7 +23,7 @@ builder.Services
     .GetApplicationSettings(builder.Configuration));
 
 builder.Services.AddIdentityServices();
-builder.Services.AddEmployeeService();
+builder.Services.AddLinkService();
 builder.Services.AddInfrastructureDependencies();
 
 builder.Services.AddEndpointsApiExplorer();

@@ -34,14 +34,14 @@ public class AppPermissions
             new(AppFeature.RoleClaims, AppAction.Update, AppRoleGroup.SystemAccess,
                 "Update Role Claims/Permissions"),
 
-            new(AppFeature.Employees, AppAction.Read, AppRoleGroup.ManagementHierarchy,
-                "Read Employees", IsBasic: true),
-            new(AppFeature.Employees, AppAction.Create, AppRoleGroup.ManagementHierarchy,
-                "Create Employees"),
-            new(AppFeature.Employees, AppAction.Update, AppRoleGroup.ManagementHierarchy,
-                "Update Employees"),
-            new(AppFeature.Employees, AppAction.Delete, AppRoleGroup.ManagementHierarchy,
-                "Delete Employees")
+            new(AppFeature.Links, AppAction.Read, AppRoleGroup.ManagementHierarchy,
+                "Read Links", IsBasic: true),
+            new(AppFeature.Links, AppAction.Create, AppRoleGroup.ManagementHierarchy,
+                "Create Links"),
+            new(AppFeature.Links, AppAction.Update, AppRoleGroup.ManagementHierarchy,
+                "Update Links"),
+            new(AppFeature.Links, AppAction.Delete, AppRoleGroup.ManagementHierarchy,
+                "Delete Links")
     };
 
     public static IReadOnlyList<AppPermission> AdminPermissions { get; } =

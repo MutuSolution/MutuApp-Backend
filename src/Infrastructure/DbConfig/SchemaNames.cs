@@ -3,5 +3,5 @@
 internal static class SchemaNames
 {
     public static string Security = nameof(Security);
-    public static string HR = nameof(HR);
+    public static string LINK = nameof(LINK);
 }

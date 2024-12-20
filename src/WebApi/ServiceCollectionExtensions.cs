@@ -173,12 +173,7 @@ namespace WebApi
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ABCHR API",
-                    License = new OpenApiLicense
-                    {
-                        Name = "MIT License",
-                        Url = new Uri("https://opensource.org/licenses/MIT")
-                    }
+                    Title = "MutuLink API"
                 });
             });
         }

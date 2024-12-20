@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Common.Requests.Employees;
-using Common.Responses.Employees;
+using Common.Requests.Links;
+using Common.Responses.Links;
 using Domain;
 
 namespace Application;
@@ -9,7 +9,7 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        CreateMap<CreateEmployeeRequest, Employee>();
-        CreateMap<Employee, EmployeeResponse>();
+        CreateMap<CreateLinkRequest, Link>();
+        CreateMap<Link, LinkResponse>();
     }
 }

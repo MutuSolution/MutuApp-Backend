@@ -30,6 +30,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 
-    public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<Link> Links => Set<Link>();
 
 }
