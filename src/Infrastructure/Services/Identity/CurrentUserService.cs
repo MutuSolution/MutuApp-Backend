@@ -1,6 +1,5 @@
 ﻿using Application.Services.Identity;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Infrastructure.Services.Identity;
 

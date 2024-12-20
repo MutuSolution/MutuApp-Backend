@@ -2,12 +2,6 @@
 using Common.Requests.Identity;
 using Common.Responses.Wrappers;
 using MediatR;
-using MediatR.Pipeline;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Identity.Roles.Commands;
 
@@ -17,7 +11,7 @@ public class UpdateRolePermissionsCommand : IRequest<IResponseWrapper>
 }
 
 public class UpdateRolePermissionsCommandHandler : IRequestHandler<UpdateRolePermissionsCommand, IResponseWrapper>
-{ 
+{
     private readonly IRoleService _roleService;
 
     public UpdateRolePermissionsCommandHandler(IRoleService roleService)

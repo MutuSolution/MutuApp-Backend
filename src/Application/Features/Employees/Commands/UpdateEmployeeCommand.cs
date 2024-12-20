@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Pipelines;
+using Application.Services;
 using AutoMapper;
 using Common.Requests.Employees;
 using Common.Responses.Employees;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Application.Features.Employees.Commands;
 
-public class UpdateEmployeeCommand : IRequest<IResponseWrapper>
+public class UpdateEmployeeCommand : IRequest<IResponseWrapper>, IValidateMe
 {
     public UpdateEmployeeRequest UpdateEmployeeRequest { get; set; }
 }
