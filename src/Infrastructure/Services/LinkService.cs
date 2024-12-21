@@ -51,16 +51,24 @@ public class LinkService : ILinkService
 
     public async Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters)
     {
-        var query = _context.Set<Link>().AsQueryable().Where(x =>
-            (x.IsPublic == parameters.IsPublic) &&
-            (x.LikeCount >= parameters.MinLikeCount) &&
-            (x.IsDeleted == parameters.IsDeleted)
-            );
+        var query = _context.Set<Link>().AsQueryable()
+            .Where(x =>
+                // Filtering
+                (x.IsPublic == parameters.IsPublic) &&
+                (x.LikeCount >= parameters.MinLikeCount) &&
+                (x.IsDeleted == parameters.IsDeleted) &&
+                (string.IsNullOrEmpty(parameters.SearchTerm) ||
+                // Searching with case-insensitive comparison
+                x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())))
+            .OrderBy(x => x.Id);
 
         var totalCount = await query.CountAsync();
-        var totalPage = totalCount > 0 ? (int)Math
-            .Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
+        var totalPage = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
         if (totalCount == 0) parameters.ItemsPerPage = 0;
+
         var items = await query
                 .Skip(parameters.Skip)
                 .Take(parameters.ItemsPerPage)
@@ -68,4 +76,6 @@ public class LinkService : ILinkService
 
         return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
+
+
 }
