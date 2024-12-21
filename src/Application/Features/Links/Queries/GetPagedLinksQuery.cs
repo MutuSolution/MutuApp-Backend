@@ -4,11 +4,6 @@ using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Features.Links.Queries;
 
@@ -27,7 +22,7 @@ public class GetPagedLinksQueryHandler : IRequestHandler<GetPagedLinksQuery, IRe
         _linkService = linkService;
         _mapper = mapper;
     }
-  
+
     async Task<IResponseWrapper<PaginationResult<LinkResponse>>> IRequestHandler<GetPagedLinksQuery, IResponseWrapper<PaginationResult<LinkResponse>>>.Handle(GetPagedLinksQuery request, CancellationToken cancellationToken)
     {
         var pagedResult = await _linkService.GetPagedLinksAsync(request.Parameters);

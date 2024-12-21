@@ -1,5 +1,4 @@
 ﻿using Application.Services;
-using Application.Services.Identity;
 using Common.Requests.Links;
 using Domain;
 using FluentValidation;
@@ -23,7 +22,7 @@ public class UpdateLinkRequestValidator : AbstractValidator<UpdateLinkRequest>
         .NotEmpty();
 
         RuleFor(x => x.UserName)
-        .NotEmpty();     
+        .NotEmpty();
 
         RuleFor(x => x.Description)
         .NotEmpty();

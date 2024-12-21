@@ -3,7 +3,6 @@ using Common.Responses.Pagination;
 using Domain;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Infrastructure.Services;
 

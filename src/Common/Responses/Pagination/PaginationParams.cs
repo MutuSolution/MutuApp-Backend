@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Common.Responses.Pagination;
+﻿namespace Common.Responses.Pagination;
 public class PaginationParams
 {
     public int Page { get; set; } = 1; // Varsayılan 1. sayfa
     public int ItemsPerPage { get; set; } = 10; // Varsayılan 10 kayıt
-
-     public int Skip => (Page - 1) * ItemsPerPage;
+    public int Skip => (Page - 1) * ItemsPerPage;
 }

@@ -24,7 +24,7 @@ public class UpdateLinkCommandHandler : IRequestHandler<UpdateLinkCommand, IResp
         _mapper = mapper;
     }
 
-    public async Task<IResponseWrapper> Handle(UpdateLinkCommand request, 
+    public async Task<IResponseWrapper> Handle(UpdateLinkCommand request,
         CancellationToken cancellationToken)
     {
         var linkInDb = await _linkService
@@ -38,7 +38,7 @@ public class UpdateLinkCommandHandler : IRequestHandler<UpdateLinkCommand, IResp
             linkInDb.IsPublic = request.UpdateLinkRequest.IsPublic;
             linkInDb.IsDeleted = request.UpdateLinkRequest.IsDeleted;
             linkInDb.LikeCount = request.UpdateLinkRequest.LikeCount;
-             
+
 
             var updatedLink = await _linkService.UpdateLinkAsync(linkInDb);
             var mappedLink = _mapper.Map<LinkResponse>(updatedLink);

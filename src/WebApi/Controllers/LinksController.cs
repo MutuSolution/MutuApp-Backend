@@ -1,6 +1,5 @@
 ﻿using Application.Features.Links.Commands;
 using Application.Features.Links.Queries;
-using Azure;
 using Common.Authorization;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
