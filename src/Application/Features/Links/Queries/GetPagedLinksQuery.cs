@@ -13,7 +13,7 @@ namespace Application.Features.Links.Queries;
 
 public class GetPagedLinksQuery : IRequest<PaginationResult<LinkResponse>>
 {
-    public PaginationParams PaginationParams { get; set; } = new PaginationParams();
+    public LinkParameters Parameters { get; set; } = new LinkParameters();
 }
 
 public class GetPagedLinksQueryHandler : IRequestHandler<GetPagedLinksQuery, PaginationResult<LinkResponse>>
@@ -29,7 +29,7 @@ public class GetPagedLinksQueryHandler : IRequestHandler<GetPagedLinksQuery, Pag
 
     public async Task<PaginationResult<LinkResponse>> Handle(GetPagedLinksQuery request, CancellationToken cancellationToken)
     {
-        var pagedResult = await _linkService.GetPagedLinksAsync(request.PaginationParams);
+        var pagedResult = await _linkService.GetPagedLinksAsync(request.Parameters);
         var mappedItems = _mapper.Map<IEnumerable<LinkResponse>>(pagedResult.Items);
 
         return new PaginationResult<LinkResponse>(

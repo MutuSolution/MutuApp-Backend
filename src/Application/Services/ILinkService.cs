@@ -10,5 +10,5 @@ public interface ILinkService
     Task<Link> GetLinkByIdAsync(int id);
     Task<Link> UpdateLinkAsync(Link link);
     Task<int> DeleteLinkAsync(Link link);
-    Task<PaginationResult<Link>> GetPagedLinksAsync(PaginationParams paginationParams);
+    Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters);
 }

@@ -50,16 +50,21 @@ public class LinkService : ILinkService
         return link;
     }
 
-    public async Task<PaginationResult<Link>> GetPagedLinksAsync(PaginationParams paginationParams)
+    public async Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters)
     {
-        var query = _context.Set<Link>().AsQueryable();
+        var query = _context.Set<Link>().AsQueryable().Where(x =>
+            (x.IsPublic == parameters.IsPublic) &&
+            (x.LikeCount >= parameters.MinLikeCount) &&
+            (x.IsDeleted == parameters.IsDeleted)
+            );
 
         var totalCount = await query.CountAsync();
+        if (totalCount == 0) parameters.ItemsPerPage = 0;
         var items = await query
-            .Skip(paginationParams.Skip)
-            .Take(paginationParams.ItemsPerPage)
-            .ToListAsync();
+                .Skip(parameters.Skip)
+                .Take(parameters.ItemsPerPage)
+                .ToListAsync();
 
-        return new PaginationResult<Link>(items, totalCount, paginationParams.Page, paginationParams.ItemsPerPage);
+        return new PaginationResult<Link>(items, totalCount, parameters.Page, parameters.ItemsPerPage);
     }
 }

@@ -61,19 +61,20 @@ public class LinksController : MyBaseController<LinksController>
 
     [HttpGet]
     [MustHavePermission(AppFeature.Links, AppAction.Read)]
-    public async Task<IActionResult> GetLinks([FromQuery] PaginationParams paginationParams)
+    public async Task<IActionResult> GetLinks([FromQuery] LinkParameters parameters)
     {
-        var query = new GetPagedLinksQuery { PaginationParams = paginationParams };
+        var query = new GetPagedLinksQuery { Parameters = parameters };
         var result = await MediatorSender.Send(query);
 
         // Pagination bilgilerini JSON formatında oluştur
+        var totalPages = result.TotalCount > 0 ? (int)Math
+            .Ceiling((double)result.TotalCount / result.ItemsPerPage) : 0;
         var paginationHeader = new
         {
             current_page = result.Page,
             items_per_page = result.ItemsPerPage,
             total_items = result.TotalCount,
-            total_pages = (int)Math
-            .Ceiling((double)result.TotalCount / result.ItemsPerPage),
+            total_pages = totalPages,
             has_previous_page = result.HasPreviousPage,
             has_next_page = result.HasNextPage
         };
