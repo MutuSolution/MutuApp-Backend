@@ -1,5 +1,6 @@
 ﻿using Application.Features.Links.Commands;
 using Application.Features.Links.Queries;
+using Azure;
 using Common.Authorization;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
@@ -41,20 +42,20 @@ public class LinksController : MyBaseController<LinksController>
         return NotFound(response);
     }
 
-    [HttpGet("all-core")]
-    [MustHavePermission(AppFeature.Links, AppAction.Read)]
-    public async Task<IActionResult> GetLinkList()
-    {
-        var response = await MediatorSender.Send(new GetLinksQuery());
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
-    }
-
     [HttpGet("{linkId:int}")]
     [MustHavePermission(AppFeature.Links, AppAction.Read)]
     public async Task<IActionResult> GetLinkById(int linkId)
     {
         var response = await MediatorSender.Send(new GetLinkByIdQuery { LinkId = linkId });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpGet("all-core")]
+    [MustHavePermission(AppFeature.Links, AppAction.Read)]
+    public async Task<IActionResult> GetLinkList()
+    {
+        var response = await MediatorSender.Send(new GetLinksQuery());
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
@@ -65,24 +66,25 @@ public class LinksController : MyBaseController<LinksController>
     {
         var query = new GetPagedLinksQuery { Parameters = parameters };
         var result = await MediatorSender.Send(query);
-
-        // Pagination bilgilerini JSON formatında oluştur
-        var totalPages = result.TotalCount > 0 ? (int)Math
-            .Ceiling((double)result.TotalCount / result.ItemsPerPage) : 0;
-        var paginationHeader = new
-        {
-            current_page = result.Page,
-            items_per_page = result.ItemsPerPage,
-            total_items = result.TotalCount,
-            total_pages = totalPages,
-            has_previous_page = result.HasPreviousPage,
-            has_next_page = result.HasNextPage
-        };
-
-        // Header'a ekle
-        Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(paginationHeader));
-
-        return Ok(result.Items);
+        if (result.IsSuccessful) return Ok(result);
+        return NotFound(result);
     }
 
 }
+
+//headerde değer gönderme.
+// Pagination bilgilerini JSON formatında oluştur
+//var totalPages = result.ResponseData.TotalCount > 0 ? (int)Math
+//    .Ceiling((double)result.ResponseData.TotalCount / result.ResponseData.ItemsPerPage) : 0;
+//var paginationHeader = new
+//{
+//    current_page = result.ResponseData.Page,
+//    items_per_page = result.ResponseData.ItemsPerPage,
+//    total_items = result.ResponseData.TotalCount,
+//    total_pages = totalPages,
+//    has_previous_page = result.ResponseData.HasPreviousPage,
+//    has_next_page = result.ResponseData.HasNextPage
+//};
+// Header'a ekle
+//Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(paginationHeader));
+// return Ok(result.ResponseData.Items);

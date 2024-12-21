@@ -59,12 +59,14 @@ public class LinkService : ILinkService
             );
 
         var totalCount = await query.CountAsync();
+        var totalPage = totalCount > 0 ? (int)Math
+            .Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
         if (totalCount == 0) parameters.ItemsPerPage = 0;
         var items = await query
                 .Skip(parameters.Skip)
                 .Take(parameters.ItemsPerPage)
                 .ToListAsync();
 
-        return new PaginationResult<Link>(items, totalCount, parameters.Page, parameters.ItemsPerPage);
+        return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 }
