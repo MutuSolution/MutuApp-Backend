@@ -66,14 +66,22 @@ public class LinksController : MyBaseController<LinksController>
         var query = new GetPagedLinksQuery { PaginationParams = paginationParams };
         var result = await MediatorSender.Send(query);
 
-        // Header'lara pagination bilgilerini ekle
-        Response.Headers.Append("X-Total-Count", result.TotalCount.ToString());
-        Response.Headers.Append("X-Page", result.Page.ToString());
-        Response.Headers.Append("X-Items-Per-Page", result.ItemsPerPage.ToString());
-        Response.Headers.Append("X-Has-Previous-Page", 
-            result.HasPreviousPage.ToString());
-        Response.Headers.Append("X-Has-Next-Page", result.HasNextPage.ToString());
+        // Pagination bilgilerini JSON formatında oluştur
+        var paginationHeader = new
+        {
+            current_page = result.Page,
+            items_per_page = result.ItemsPerPage,
+            total_items = result.TotalCount,
+            total_pages = (int)Math
+            .Ceiling((double)result.TotalCount / result.ItemsPerPage),
+            has_previous_page = result.HasPreviousPage,
+            has_next_page = result.HasNextPage
+        };
+
+        // Header'a ekle
+        Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(paginationHeader));
 
         return Ok(result.Items);
     }
+
 }

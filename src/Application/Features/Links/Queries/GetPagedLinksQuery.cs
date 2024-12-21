@@ -37,6 +37,7 @@ public class GetPagedLinksQueryHandler : IRequestHandler<GetPagedLinksQuery, Pag
             pagedResult.TotalCount,
             pagedResult.Page,
             pagedResult.ItemsPerPage
+
         );
     }
 }
