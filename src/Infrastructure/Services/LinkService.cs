@@ -1,7 +1,9 @@
 ﻿using Application.Services;
+using Common.Responses.Pagination;
 using Domain;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Infrastructure.Services;
 
@@ -46,5 +48,18 @@ public class LinkService : ILinkService
         _context.Links.Update(link);
         await _context.SaveChangesAsync();
         return link;
+    }
+
+    public async Task<PaginationResult<Link>> GetPagedLinksAsync(PaginationParams paginationParams)
+    {
+        var query = _context.Set<Link>().AsQueryable();
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip(paginationParams.Skip)
+            .Take(paginationParams.ItemsPerPage)
+            .ToListAsync();
+
+        return new PaginationResult<Link>(items, totalCount, paginationParams.Page, paginationParams.ItemsPerPage);
     }
 }
