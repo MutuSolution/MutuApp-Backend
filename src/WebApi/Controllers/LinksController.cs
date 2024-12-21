@@ -71,6 +71,14 @@ public class LinksController : MyBaseController<LinksController>
 
 }
 
+
+
+
+
+
+
+
+
 //headerde değer gönderme.
 // Pagination bilgilerini JSON formatında oluştur
 //var totalPages = result.ResponseData.TotalCount > 0 ? (int)Math

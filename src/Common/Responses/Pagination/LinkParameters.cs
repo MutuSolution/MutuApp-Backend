@@ -6,5 +6,8 @@ public class LinkParameters : PaginationParams
     public bool IsDeleted { get; set; } = false;
     public bool? IsPublic { get; set; }
 
-    public string? SearchTerm { get; set; }
+    public LinkParameters()
+    {
+        OrderBy = "id";
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Extensions;
+using Application.Services;
 using Common.Responses.Pagination;
 using Domain;
 using Infrastructure.Context;
@@ -63,7 +64,7 @@ public class LinkService : ILinkService
                 x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())))
-            .OrderBy(x => x.Id);
+            .Sort(parameters.OrderBy);
 
         var totalCount = await query.CountAsync();
         var totalPage = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
