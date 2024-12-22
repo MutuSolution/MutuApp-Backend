@@ -84,14 +84,14 @@ namespace WebApi
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("The Token is expired."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1710] The Token is expired."));
                                 return c.Response.WriteAsync(result);
                             }
                             else
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("An unhandled error has occurred."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1647] An unhandled error has occurred."));
                                 return c.Response.WriteAsync(result);
                             }
                         },
@@ -102,7 +102,7 @@ namespace WebApi
                             {
                                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 context.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not Authorized."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1711] You are not Authorized."));
                                 return context.Response.WriteAsync(result);
                             }
 
@@ -112,7 +112,7 @@ namespace WebApi
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("You are not authorized to access this resource."));
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1712] You are not authorized to access this resource."));
                             return context.Response.WriteAsync(result);
                         },
                     };

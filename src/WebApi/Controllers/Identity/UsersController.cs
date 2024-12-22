@@ -87,4 +87,16 @@ public class UsersController : MyBaseController<UsersController>
         if (response.IsSuccessful) return Ok(response);
         return BadRequest(response);
     }
+
+    [HttpDelete("hard")]
+    [MustHavePermission(AppFeature.Users, AppAction.Delete)]
+    public async Task<IActionResult> DeleteUser([FromBody] DeleteUserByUsernameRequest deleteUser)
+    {
+        var response = await MediatorSender.Send(new DeleteUserByUsernameCommand
+        {
+            DeleteUserByUsername = deleteUser
+        });
+        if (response.IsSuccessful) return Ok(response);
+        return BadRequest(response);
+    }
 }

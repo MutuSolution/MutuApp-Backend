@@ -1,5 +1,6 @@
 ﻿using Application.Services.Identity;
 using AutoMapper;
+using Azure.Core;
 using Common.Authorization;
 using Common.Requests.Identity;
 using Common.Responses.Identity;
@@ -127,9 +128,6 @@ public class UserService : IUserService
 
     public async Task<IResponseWrapper> RegisterUserAsync(UserRegistrationRequest request)
     {
-        if (request.Password != request.ConfirmPassword)
-            return ResponseWrapper.Fail("Password must be equal.");
-
         var userWithEmailInDb = await _userManager.FindByEmailAsync(request.Email);
         if (userWithEmailInDb is not null) await ResponseWrapper.FailAsync("Email already taken.");
 
@@ -143,8 +141,8 @@ public class UserService : IUserService
             LastName = request.LastName,
             Email = request.Email,
             UserName = request.UserName,
-            IsActive = request.ActivateUser,
-            EmailConfirmed = request.AutoConfirmEmail
+            IsActive = true,
+            EmailConfirmed = true
         };
         var password = new PasswordHasher<ApplicationUser>();
         newUser.PasswordHash = password.HashPassword(newUser, request.Password);
@@ -228,4 +226,15 @@ public class UserService : IUserService
         return errorDescriptions;
     }
 
+    public async Task<IResponseWrapper> DeleteAsync(DeleteUserByUsernameRequest request)
+    {
+        
+        var userInDb = await _userManager.FindByNameAsync(request.UserName);
+        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+
+        var identityResult = await _userManager.DeleteAsync(userInDb);
+        if (!identityResult.Succeeded)
+            return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
+        return await ResponseWrapper<string>.SuccessAsync("User successfully deleted.");
+    }
 }
