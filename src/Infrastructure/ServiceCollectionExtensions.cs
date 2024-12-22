@@ -32,10 +32,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddEmployeeService(this IServiceCollection services)
+    public static IServiceCollection AddLinkService(this IServiceCollection services)
     {
         services
-            .AddTransient<IEmployeeService, EmployeeService>();
+            .AddTransient<ILinkService, LinkService>();
         return services;
     }
 

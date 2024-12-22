@@ -11,6 +11,7 @@ public interface IUserService
     Task<IResponseWrapper<UserResponse>> GetUserByEmailAsync(string email);
     Task<IResponseWrapper<UserResponse>> GetUserByUserNameAsync(string username);
     Task<IResponseWrapper> GetAllUsersAsync();
+    Task<IResponseWrapper> DeleteAsync(DeleteUserByUsernameRequest request);
     Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request);
     Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request);
     Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request);

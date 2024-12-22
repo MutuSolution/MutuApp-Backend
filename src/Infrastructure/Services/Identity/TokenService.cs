@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -30,12 +31,27 @@ public class TokenService : ITokenService
 
     public async Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest)
     {
-        // Validate user
-        var user = await _userManager.FindByEmailAsync(tokenRequest.Email);
+        ApplicationUser user;
+
+        if (tokenRequest.Email is not null)
+        {
+            user = await _userManager.FindByEmailAsync(tokenRequest.Email);
+        }else
+        {
+            user = await _userManager.FindByNameAsync(tokenRequest.UserName);
+        }
+
         // Check user
         if (user is null)
         {
             return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+        }
+
+        // Check if Active
+        if (!user.LockoutEnabled)
+        {
+            return await ResponseWrapper<TokenResponse>
+                .FailAsync("User not active. Please wait 2 hours.");
         }
 
         // Check if Active

@@ -1,0 +1,15 @@
+﻿using Common.Responses.Pagination;
+using Domain;
+
+namespace Application.Services;
+
+public interface ILinkService
+{
+    Task<Link> CreateLinkAsync(Link link);
+    Task<List<Link>> GetLinkListAsync();
+    Task<Link> GetLinkByIdAsync(int id);
+    Task<Link> UpdateLinkAsync(Link link);
+    Task<int> DeleteLinkAsync(Link link);
+    Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters);
+    Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
+}
