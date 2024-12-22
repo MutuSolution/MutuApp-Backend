@@ -78,5 +78,35 @@ public class LinkService : ILinkService
         return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
+    public async Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters)
+    {
+        var query = _context.Set<Link>().AsQueryable()
+            .Where(x =>
+                // Filtering
+                (x.UserName == parameters.UserName) &&
+                (x.LikeCount >= parameters.MinLikeCount) &&
+                (x.IsDeleted == parameters.IsDeleted) &&
+                (string.IsNullOrEmpty(parameters.SearchTerm) ||
+                // Searching with case-insensitive comparison
+                x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+                x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
+
+ 
+        query = query.Sort(parameters.OrderBy);
+
+        var totalCount = await query.CountAsync();
+        var totalPage = totalCount > 0 ? 
+            (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
+        if (totalCount == 0) parameters.ItemsPerPage = 0;
+
+        var items = await query
+                .Skip(parameters.Skip)
+                .Take(parameters.ItemsPerPage)
+                .ToListAsync();
+
+        return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+    }
 
 }

@@ -4,6 +4,7 @@ using Common.Authorization;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using WebApi.Attributes;
 
 namespace WebApi.Controllers;
@@ -59,7 +60,17 @@ public class LinksController : MyBaseController<LinksController>
         return NotFound(response);
     }
 
-    [HttpGet]
+    [HttpGet("all-one-user")]
+    [MustHavePermission(AppFeature.Links, AppAction.Read)]
+    public async Task<IActionResult> GetLinksByUserName([FromQuery] LinksByUserNameParameters parameters)
+    {
+        var query = new GetPagedLinksByUserNameQuery { Parameters = parameters };
+        var result = await MediatorSender.Send(query);
+        if (result.IsSuccessful) return Ok(result);
+        return NotFound(result);
+    }
+
+    [HttpGet("all")]
     [MustHavePermission(AppFeature.Links, AppAction.Read)]
     public async Task<IActionResult> GetLinks([FromQuery] LinkParameters parameters)
     {
