@@ -11,15 +11,7 @@ namespace WebApi.Controllers.Identity;
 [Route("api/[controller]")]
 public class UsersController : MyBaseController<UsersController>
 {
-    [HttpPost("register")]
-    [AllowAnonymous]
-    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest userRegistration)
-    {
-        var response = await MediatorSender
-            .Send(new UserRegistrationCommand { UserRegistration = userRegistration });
-        if (response.IsSuccessful) return Ok(response);
-        return BadRequest(response);
-    }
+
 
     [HttpGet("{userId}")]
     [MustHavePermission(AppFeature.Users, AppAction.Read)]

@@ -1,4 +1,5 @@
 ﻿using Application.Features.Identity.Token.Queries;
+using Application.Features.Identity.Users.Commands;
 using Common.Requests.Identity;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace WebApi.Controllers.Identity;
 public class AuthController : MyBaseController<AuthController>
 {
 
-    [HttpPost("get-token")]
+    [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequest tokenRequest)
     {
@@ -33,6 +34,16 @@ public class AuthController : MyBaseController<AuthController>
         {
             return Ok(response);
         }
+        return BadRequest(response);
+    }
+
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest userRegistration)
+    {
+        var response = await MediatorSender
+            .Send(new UserRegistrationCommand { UserRegistration = userRegistration });
+        if (response.IsSuccessful) return Ok(response);
         return BadRequest(response);
     }
 
