@@ -37,11 +37,11 @@ public class AppPermissions
             new(AppFeature.Links, AppAction.Read, AppRoleGroup.ManagementHierarchy,
                 "Read Links", IsBasic: true),
             new(AppFeature.Links, AppAction.Create, AppRoleGroup.ManagementHierarchy,
-                "Create Links"),
+                "Create Links", IsBasic: true),
             new(AppFeature.Links, AppAction.Update, AppRoleGroup.ManagementHierarchy,
-                "Update Links"),
+                "Update Links", IsBasic: true),
             new(AppFeature.Links, AppAction.Delete, AppRoleGroup.ManagementHierarchy,
-                "Delete Links")
+                "Delete Links", IsBasic: true)
     };
 
     public static IReadOnlyList<AppPermission> AdminPermissions { get; } =
