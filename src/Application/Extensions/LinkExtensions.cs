@@ -10,7 +10,7 @@ namespace Application.Extensions;
 
 public static class LinkExtensions
 {
-    public static IQueryable<Link> Sort(this IQueryable<Link> links, string orderByQueryString)
+    public static IQueryable<Link> SortLink(this IQueryable<Link> links, string orderByQueryString)
     {
         if(string.IsNullOrWhiteSpace(orderByQueryString))
             return links.OrderBy(x=> x.Id);

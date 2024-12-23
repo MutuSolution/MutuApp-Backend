@@ -1,13 +1,17 @@
-﻿using Application.Services.Identity;
+﻿using Application.Extensions;
+using Application.Services.Identity;
 using AutoMapper;
 using Azure.Core;
 using Common.Authorization;
 using Common.Requests.Identity;
 using Common.Responses.Identity;
+using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
+using Domain;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Services.Identity;
 
@@ -65,6 +69,35 @@ public class UserService : IUserService
         if (userInDb.Count <= 0) return await ResponseWrapper.FailAsync("No users were found.");
         var mappedUsers = _mapper.Map<List<UserResponse>>(userInDb);
         return await ResponseWrapper<List<UserResponse>>.SuccessAsync(mappedUsers);
+    }
+
+    public async Task<PaginationResult<IUser>> GetPagedUsersAsync(UserParameters parameters)
+    {
+        var query = _userManager.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(parameters.SearchTerm))
+        {
+            query = query.Where(x =>
+                EF.Functions.Like(x.FirstName, $"%{parameters.SearchTerm}%") ||
+                EF.Functions.Like(x.LastName, $"%{parameters.SearchTerm}%") ||
+                EF.Functions.Like(x.UserName, $"%{parameters.SearchTerm}%") ||
+                EF.Functions.Like(x.Id, $"%{parameters.SearchTerm}%") ||
+                EF.Functions.Like(x.Email, $"%{parameters.SearchTerm}%"));
+        }
+
+        query = (IQueryable<ApplicationUser>)query.Where(x => x.IsActive == parameters.IsActive)
+                     .SortUser(parameters.OrderBy);
+
+        var totalCount = await query.CountAsync();
+        var totalPage = totalCount > 0 ? (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
+
+        var items = await query
+            .Skip(parameters.Skip)
+            .Take(parameters.ItemsPerPage)
+            .ToListAsync();
+
+        return new PaginationResult<IUser>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+
     }
 
     public async Task<IResponseWrapper> GetRolesAsync(string userId)
@@ -228,7 +261,7 @@ public class UserService : IUserService
 
     public async Task<IResponseWrapper> DeleteAsync(DeleteUserByUsernameRequest request)
     {
-        
+
         var userInDb = await _userManager.FindByNameAsync(request.UserName);
         if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
 
@@ -237,4 +270,5 @@ public class UserService : IUserService
             return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
         return await ResponseWrapper<string>.SuccessAsync("User successfully deleted.");
     }
+
 }

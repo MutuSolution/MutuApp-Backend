@@ -1,7 +1,9 @@
 ﻿using Application.Features.Identity.Users.Commands;
 using Application.Features.Identity.Users.Queries;
+using Application.Features.Links.Queries;
 using Common.Authorization;
 using Common.Requests.Identity;
+using Common.Responses.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Attributes;
@@ -30,6 +32,16 @@ public class UsersController : MyBaseController<UsersController>
         var response = await MediatorSender.Send(new GetAllUsersQuery());
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
+    }
+
+    [HttpGet("all")]
+    [MustHavePermission(AppFeature.Users, AppAction.Read)]
+    public async Task<IActionResult> GetUsers([FromQuery] UserParameters parameters)
+    {
+        var query = new GetPagedUsersQuery { Parameters = parameters };
+        var result = await MediatorSender.Send(query);
+        if (result.IsSuccessful) return Ok(result);
+        return NotFound(result);
     }
 
     [HttpPut]
