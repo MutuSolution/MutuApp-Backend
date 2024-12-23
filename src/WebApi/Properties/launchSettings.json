@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:47051",
+      "applicationUrl": "https://api.mutuapp.com",
       "sslPort": 44343
     }
   },
