@@ -1,4 +1,5 @@
 ﻿using Application.AppConfigs;
+using AspNetCoreRateLimit;
 using Common.Authorization;
 using Common.Responses.Wrappers;
 using Infrastructure.Context;
@@ -176,6 +177,27 @@ namespace WebApi
                     Title = "MutuLink API"
                 });
             });
+        }
+
+        internal static void ConfigureRateLimitingOptions(this IServiceCollection services)
+        {
+            var rateLimitRules = new List<RateLimitRule>()
+            {
+              new RateLimitRule()
+              {
+                  Endpoint = "*",
+                  Limit = 1,
+                  Period = "3s"
+              }
+            };
+
+            services.Configure<IpRateLimitOptions>(opt => {
+                opt.GeneralRules = rateLimitRules;
+            });
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
         }
     }
 }

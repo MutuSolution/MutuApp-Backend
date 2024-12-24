@@ -1,4 +1,5 @@
 using Application;
+using AspNetCoreRateLimit;
 using Infrastructure;
 using WebApi;
 using WebApi.Middlewares;
@@ -28,6 +29,9 @@ builder.Services.AddInfrastructureDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterSwagger();
+builder.Services.AddMemoryCache();
+builder.Services.ConfigureRateLimitingOptions();
+builder.Services.AddHttpContextAccessor();  
 
 
 var app = builder.Build();
@@ -41,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseIpRateLimiting();
 app.UseCors("Mutulink Admin");
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
