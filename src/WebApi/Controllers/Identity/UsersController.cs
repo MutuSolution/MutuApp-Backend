@@ -15,12 +15,32 @@ public class UsersController : MyBaseController<UsersController>
 {
 
 
-    [HttpGet("{userId}")]
+    [HttpGet("id/{userId}")]
     [MustHavePermission(AppFeature.Users, AppAction.Read)]
     public async Task<IActionResult> GetUserById(string userId)
     {
         var response = await MediatorSender
             .Send(new GetUserByIdQuery { UserId = userId });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpGet("username/{userName}")]
+    [MustHavePermission(AppFeature.Users, AppAction.Read)]
+    public async Task<IActionResult> GetUserByuserName(string userName)
+    {
+        var response = await MediatorSender
+            .Send(new GetUserByUserNameQuery { UserName = userName });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpGet("email/{email}")]
+    [MustHavePermission(AppFeature.Users, AppAction.Read)]
+    public async Task<IActionResult> GetUserByEmail(string email)
+    {
+        var response = await MediatorSender
+            .Send(new GetUserByEmailQuery { Email = email });
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
