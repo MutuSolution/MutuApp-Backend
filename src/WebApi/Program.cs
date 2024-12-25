@@ -45,8 +45,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseIpRateLimiting();
 app.UseCors("Mutulink Admin");
+app.UseIpRateLimiting();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapControllers();
