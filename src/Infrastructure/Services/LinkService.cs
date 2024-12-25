@@ -1,8 +1,12 @@
 ﻿using Application.Extensions;
 using Application.Services;
+using Common.Requests.Identity;
+using Common.Requests.Links;
 using Common.Responses.Pagination;
+using Common.Responses.Wrappers;
 using Domain;
 using Infrastructure.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
@@ -109,4 +113,14 @@ public class LinkService : ILinkService
         return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
+ 
+
+    public async Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request)
+    {
+        var linkInDb = _context.Links.Find(request.LinkId);
+        linkInDb.IsDeleted = true;
+        _context.Links.Update(linkInDb);
+        await _context.SaveChangesAsync();
+        return ResponseWrapper.Success("Link successfully deleted.");
+    }
 }

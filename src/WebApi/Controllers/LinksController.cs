@@ -1,6 +1,8 @@
-﻿using Application.Features.Links.Commands;
+﻿using Application.Features.Identity.Users.Commands;
+using Application.Features.Links.Commands;
 using Application.Features.Links.Queries;
 using Common.Authorization;
+using Common.Requests.Identity;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
 using Microsoft.AspNetCore.Mvc;
@@ -80,6 +82,14 @@ public class LinksController : MyBaseController<LinksController>
         return NotFound(result);
     }
 
+    [HttpPut("soft-delete")]
+    [MustHavePermission(AppFeature.Links, AppAction.Update)]
+    public async Task<IActionResult> SoftDelete([FromBody] SoftDeleteLinkRequest request)
+    {
+        var response = await MediatorSender.Send(new SoftDeleteLinkCommand { SoftDeleteLinkRequest = request });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
 }
 
 

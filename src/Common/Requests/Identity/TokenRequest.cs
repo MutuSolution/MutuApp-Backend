@@ -5,12 +5,11 @@ namespace Common.Requests.Identity;
 
 public class TokenRequest
 {
-    [DefaultValue("yunus")]
     public string UserName { get; set; }
 
-    [DefaultValue("yunus@mail.com"), EmailAddress]
+    [EmailAddress]
     public string Email { get; set; }
 
-    [DefaultValue("12345678"), Required]
+    [Required]
     public string Password { get; set; }
 }
