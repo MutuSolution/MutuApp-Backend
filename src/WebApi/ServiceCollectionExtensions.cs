@@ -41,7 +41,7 @@ namespace WebApi
                 .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>()
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
-                    options.Password.RequiredLength = 6;
+                    options.Password.RequiredLength = 8;
                     options.Password.RequireDigit = false;
                     options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
@@ -85,14 +85,14 @@ namespace WebApi
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1710] The Token is expired."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML75] The Token is expired."));
                                 return c.Response.WriteAsync(result);
                             }
                             else
                             {
                                 c.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                                 c.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1647] An unhandled error has occurred."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML76] An unhandled error has occurred."));
                                 return c.Response.WriteAsync(result);
                             }
                         },
@@ -103,7 +103,7 @@ namespace WebApi
                             {
                                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                                 context.Response.ContentType = "application/json";
-                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1711] You are not Authorized."));
+                                var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML77] You are not Authorized."));
                                 return context.Response.WriteAsync(result);
                             }
 
@@ -113,7 +113,7 @@ namespace WebApi
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML221224_1712] You are not authorized to access this resource."));
+                            var result = JsonConvert.SerializeObject(ResponseWrapper.Fail("[ML78] You are not authorized to access this resource."));
                             return context.Response.WriteAsync(result);
                         },
                     };
@@ -186,8 +186,8 @@ namespace WebApi
               new RateLimitRule()
               {
                   Endpoint = "*",
-                  Limit = 1,
-                  Period = "3s"
+                  Limit = 20,
+                  Period = "1m"
               }
             };
 

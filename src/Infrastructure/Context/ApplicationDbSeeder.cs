@@ -64,7 +64,7 @@ public class ApplicationDbSeeeder
         if (!await _userManager.IsInRoleAsync(adminUser, AppRoles.Basic)
             && !await _userManager.IsInRoleAsync(adminUser, AppRoles.Admin))
         {
-            await _userManager.AddToRolesAsync(adminUser, AppRoles.DefaultRoles);
+            await _userManager.AddToRoleAsync(adminUser, AppRoles.Admin);
         }
     }
 

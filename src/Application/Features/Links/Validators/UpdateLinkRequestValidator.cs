@@ -13,7 +13,7 @@ public class UpdateLinkRequestValidator : AbstractValidator<UpdateLinkRequest>
         RuleFor(x => x.Id)
             .MustAsync(async (id, cancellation) => await linkService
             .GetLinkByIdAsync(id) is Link existing)
-            .WithMessage("[ML_06] Link does not exit.");
+            .WithMessage("[ML27] Link does not exit.");
 
         RuleFor(x => x.Title)
         .NotEmpty();

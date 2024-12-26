@@ -29,30 +29,30 @@ public class UserRegistrationRequestValidator : AbstractValidator<UserRegistrati
 
 
         RuleFor(x => x.Email)
-        .NotNull().WithMessage("Email cannot be null.")
-        .NotEmpty().WithMessage("Email cannot be empty.")
-        .EmailAddress().WithMessage("Invalid email format.")
+        .NotNull().WithMessage("[ML1] Email cannot be null.")
+        .NotEmpty().WithMessage("[ML2] Email cannot be empty.")
+        .EmailAddress().WithMessage("[ML3] Invalid email format.")
         .Must(email => !bannedDomains.Any(domain => email.EndsWith($"@{domain}")))
-        .WithMessage("Email domain is not allowed.")
-        .MaximumLength(200).WithMessage("Email cannot exceed 200 characters.")
+        .WithMessage("[ML4] Email domain is not allowed.")
+        .MaximumLength(200).WithMessage("[ML5] Email cannot exceed 200 characters.")
         .MustAsync(async (email, cancellation) => await userService
         .GetUserByEmailAsync(email) is not UserResponse existing)
-        .WithMessage("Email is already taken.");
+        .WithMessage("[ML6] Email is already taken.");
 
 
         RuleFor(x => x.UserName)
-        .NotNull().WithMessage("Username cannot be null.")
-        .NotEmpty().WithMessage("Username cannot be empty.")
-        .MinimumLength(4).WithMessage("Username must be at least 4 characters long.")
-        .MaximumLength(20).WithMessage("Username cannot exceed 20 characters.")
+        .NotNull().WithMessage("[ML7] Username cannot be null.")
+        .NotEmpty().WithMessage("[ML8] Username cannot be empty.")
+        .MinimumLength(4).WithMessage("[ML9] Username must be at least 4 characters long.")
+        .MaximumLength(20).WithMessage("[ML10] Username cannot exceed 20 characters.")
         .Matches("^[a-zA-Z0-9_.]*$")
-        .WithMessage("Username can only contain letters, numbers, underscores, and periods.")
-        .Must(username => !username.Contains(" ")).WithMessage("Username cannot contain spaces.")
+        .WithMessage("[ML11] Username can only contain letters, numbers, underscores, and periods.")
+        .Must(username => !username.Contains(" ")).WithMessage("[ML12] Username cannot contain spaces.")
         .Must(username => !forbiddenWords.Any(w => username.Contains(w)))
-        .WithMessage("Username contains forbidden words.")
+        .WithMessage("[ML13] Username contains forbidden words.")
         .MustAsync(async (username, cancellation) => await userService
         .GetUserByUserNameAsync(username) is not UserResponse existing)
-        .WithMessage("Username is already taken.");
+        .WithMessage("[ML14] Username is already taken.");
 
         RuleFor(x => x.FirstName)
             .NotEmpty()
@@ -64,14 +64,14 @@ public class UserRegistrationRequestValidator : AbstractValidator<UserRegistrati
 
 
         RuleFor(x => x.Password)
-         .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
+         .MinimumLength(8).WithMessage("[ML15] Password must be at least 8 characters long.")
          //.Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
          //.Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
          //.Matches(@"[0-9]").WithMessage("Password must contain at least one digit.")
          //.Matches(@"[\W]").WithMessage("Password must contain at least one special character.")
-         .NotEmpty().WithMessage("Password cannot be empty.");
+         .NotEmpty().WithMessage("[ML16] Password cannot be empty.");
 
         RuleFor(x => x.ConfirmPassword)
-            .Equal(x => x.Password).WithMessage("Password confirmation does not match.");
+            .Equal(x => x.Password).WithMessage("[ML17] Password confirmation does not match.");
     }
 }

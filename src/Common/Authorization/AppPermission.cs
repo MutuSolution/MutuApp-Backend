@@ -17,8 +17,8 @@ public class AppPermissions
     private static readonly AppPermission[] _all = new AppPermission[]
     {
             new(AppFeature.Users, AppAction.Create, AppRoleGroup.SystemAccess, "Create Users"),
-            new(AppFeature.Users, AppAction.Update, AppRoleGroup.SystemAccess, "Update Users"),
-            new(AppFeature.Users, AppAction.Read, AppRoleGroup.SystemAccess, "Read Users"),
+            new(AppFeature.Users, AppAction.Update, AppRoleGroup.SystemAccess, "Update Users", IsBasic: true),
+            new(AppFeature.Users, AppAction.Read, AppRoleGroup.SystemAccess, "Read Users", IsBasic: true),
             new(AppFeature.Users, AppAction.Delete, AppRoleGroup.SystemAccess, "Delete Users"),
 
             new(AppFeature.UserRoles, AppAction.Read, AppRoleGroup.SystemAccess, "Read User Roles"),

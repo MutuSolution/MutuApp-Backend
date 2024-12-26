@@ -34,8 +34,8 @@ public class CreateLinkCommandHandler :
         {
             var mappedNewLink = _mapper.Map<LinkResponse>(newLink);
             return await ResponseWrapper<LinkResponse>
-                .SuccessAsync(mappedNewLink, "Link created successfully.");
+                .SuccessAsync(mappedNewLink, "[ML18] Link created successfully.");
         }
-        return await ResponseWrapper.FailAsync("Failed to create link entry.");
+        return await ResponseWrapper.FailAsync("[ML19] Failed to create link entry.");
     }
 }

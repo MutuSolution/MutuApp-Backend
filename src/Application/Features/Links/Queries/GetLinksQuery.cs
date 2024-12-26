@@ -32,6 +32,6 @@ public class GetLinksQueryHandler : IRequestHandler<GetLinksQuery, IResponseWrap
             return await ResponseWrapper<List<LinkResponse>>
                 .SuccessAsync(mappedLinkList);
         }
-        return await ResponseWrapper.FailAsync("No links were found.");
+        return await ResponseWrapper.FailAsync("[ML25] No links were found.");
     }
 }

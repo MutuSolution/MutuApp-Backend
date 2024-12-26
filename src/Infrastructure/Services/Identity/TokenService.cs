@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -44,32 +43,32 @@ public class TokenService : ITokenService
         // Check user
         if (user is null)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML42] Invalid Credentials.");
         }
 
         // Check if Active
         if (!user.LockoutEnabled)
         {
             return await ResponseWrapper<TokenResponse>
-                .FailAsync("User not active. Please wait 2 hours.");
+                .FailAsync("[ML43] User not active. Please wait 2 hours.");
         }
 
         // Check if Active
         if (!user.IsActive)
         {
             return await ResponseWrapper<TokenResponse>
-                .FailAsync("User not active. Please contact the administrator");
+                .FailAsync("[ML44] User not active. Please contact the administrator");
         }
         // Chcek email if email confirmed
         if (!user.EmailConfirmed)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("Email not confirmed.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML45] Email not confirmed.");
         }
         // Check password
         var isPaswordValid = await _userManager.CheckPasswordAsync(user, tokenRequest.Password);
         if (!isPaswordValid)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Credentials.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML46] Invalid Credentials.");
         }
         // generate refresh token
         user.RefreshToken = GenerateRefreshToken();
@@ -95,16 +94,16 @@ public class TokenService : ITokenService
 
         if (refreshTokenRequest is null)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Client Token.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML47] Invalid Client Token.");
         }
         var userPrincipal = GetPrincipalFromExpiredToken(refreshTokenRequest.Token);
         var userEmail = userPrincipal.FindFirstValue(ClaimTypes.Email);
         var user = await _userManager.FindByEmailAsync(userEmail);
 
         if (user is null)
-            return await ResponseWrapper<TokenResponse>.FailAsync("User Not Found.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML48] User Not Found.");
         if (user.RefreshToken != refreshTokenRequest.RefreshToken || user.RefreshTokenExpiryDate <= DateTime.Now)
-            return await ResponseWrapper<TokenResponse>.FailAsync("Invalid Client Token.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML49] Invalid Client Token.");
 
         var token = GenerateEncrytedToken(GetSigningCredentials(), await GetClaimsAsync(user));
         user.RefreshToken = GenerateRefreshToken();
@@ -200,7 +199,7 @@ public class TokenService : ITokenService
             || !jwtSecurityToken.Header.Alg
             .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new SecurityTokenException("Invalid token");
+            throw new SecurityTokenException("[ML50] Invalid token");
         }
 
         return principal;

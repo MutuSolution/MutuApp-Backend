@@ -36,29 +36,29 @@ public class UserService : IUserService
     public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request)
     {
         if (request.NewPassword != request.ConfirmedNewPassword)
-            return ResponseWrapper.Fail("New passwords must be equal.");
+            return ResponseWrapper.Fail("[ML51] New passwords must be equal.");
 
         var userInDb = await _userManager.FindByIdAsync(request.UserId);
-        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb == null) return await ResponseWrapper.FailAsync("[ML52] User does not exist.");
 
         var identityResult = await _userManager
             .ChangePasswordAsync(userInDb, request.CurrentPassword, request.NewPassword);
         if (!identityResult.Succeeded)
             return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
-        return await ResponseWrapper<string>.SuccessAsync("User password changed.");
+        return await ResponseWrapper<string>.SuccessAsync("[ML53] User password changed.");
     }
 
     public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request)
     {
         var userInDb = await _userManager.FindByIdAsync(request.UserId);
-        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb == null) return await ResponseWrapper.FailAsync("[ML54] User does not exist.");
 
         userInDb.IsActive = request.Activate;
         var identityResult = await _userManager.UpdateAsync(userInDb);
         if (identityResult.Succeeded)
             return await ResponseWrapper<string>
                 .SuccessAsync(request.Activate ?
-                "User activated successfully." : "User de-activated successfully");
+                "[ML55] User activated successfully." : "[ML56] User de-activated successfully");
 
         return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
@@ -66,7 +66,7 @@ public class UserService : IUserService
     public async Task<IResponseWrapper> GetAllUsersAsync()
     {
         var userInDb = await _userManager.Users.ToListAsync();
-        if (userInDb.Count <= 0) return await ResponseWrapper.FailAsync("No users were found.");
+        if (userInDb.Count <= 0) return await ResponseWrapper.FailAsync("[ML57] No users were found.");
         var mappedUsers = _mapper.Map<List<UserResponse>>(userInDb);
         return await ResponseWrapper<List<UserResponse>>.SuccessAsync(mappedUsers);
     }
@@ -105,10 +105,10 @@ public class UserService : IUserService
         var userRolesVM = new List<UserRoleViewModel>();
 
         var userInDb = await _userManager.FindByIdAsync(userId);
-        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb == null) return await ResponseWrapper.FailAsync("[ML58] User does not exist.");
 
         var allRoles = await _roleManager.Roles.ToListAsync();
-        if (allRoles == null) return await ResponseWrapper.FailAsync("Role not found.");
+        if (allRoles == null) return await ResponseWrapper.FailAsync("[ML59] Role not found.");
 
         foreach (var role in allRoles)
         {
@@ -134,7 +134,7 @@ public class UserService : IUserService
     {
         var userInDb = await _userManager.FindByEmailAsync(email);
         if (userInDb == null)
-            return await ResponseWrapper<UserResponse>.FailAsync("User not found.");
+            return await ResponseWrapper<UserResponse>.FailAsync("[ML60] User not found.");
 
         var mappedUser = _mapper.Map<UserResponse>(userInDb);
         return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
@@ -144,7 +144,7 @@ public class UserService : IUserService
     {
         var userInDb = await _userManager.FindByNameAsync(username);
         if (userInDb == null)
-            return await ResponseWrapper<UserResponse>.FailAsync("User not found.");
+            return await ResponseWrapper<UserResponse>.FailAsync("[ML61] User not found.");
 
         var mappedUser = _mapper.Map<UserResponse>(userInDb);
         return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
@@ -153,7 +153,7 @@ public class UserService : IUserService
     public async Task<IResponseWrapper> GetUserByIdAsync(string userId)
     {
         var userInDb = await _userManager.FindByIdAsync(userId);
-        if (userInDb == null) return await ResponseWrapper.FailAsync("User not found.");
+        if (userInDb == null) return await ResponseWrapper.FailAsync("[ML62] User not found.");
 
         var mappedUser = _mapper.Map<UserResponse>(userInDb);
         return await ResponseWrapper<UserResponse>.SuccessAsync(mappedUser);
@@ -162,11 +162,11 @@ public class UserService : IUserService
     public async Task<IResponseWrapper> RegisterUserAsync(UserRegistrationRequest request)
     {
         var userWithEmailInDb = await _userManager.FindByEmailAsync(request.Email);
-        if (userWithEmailInDb is not null) await ResponseWrapper.FailAsync("Email already taken.");
+        if (userWithEmailInDb is not null) await ResponseWrapper.FailAsync("[ML63] Email already taken.");
 
         var userWithUserNameInDb = await _userManager.FindByNameAsync(request.UserName);
         if (userWithUserNameInDb is not null)
-            await ResponseWrapper.FailAsync("Username already taken.");
+            await ResponseWrapper.FailAsync("[ML64] Username already taken.");
 
         var newUser = new ApplicationUser
         {
@@ -186,7 +186,7 @@ public class UserService : IUserService
         {
             //Assing user to basic role
             await _userManager.AddToRoleAsync(newUser, AppRoles.Basic);
-            return await ResponseWrapper<string>.SuccessAsync("User registered successfully.");
+            return await ResponseWrapper<string>.SuccessAsync("[ML65] User registered successfully.");
         }
         else
         {
@@ -197,14 +197,14 @@ public class UserService : IUserService
     public async Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request)
     {
         var userInDb = await _userManager.FindByIdAsync(request.UserId);
-        if (userInDb is null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb is null) return await ResponseWrapper.FailAsync("[ML66] User does not exist.");
 
         userInDb.FirstName = request.FirstName;
         userInDb.LastName = request.LastName;
 
         var identityResult = await _userManager.UpdateAsync(userInDb);
         if (identityResult.Succeeded)
-            return await ResponseWrapper<string>.SuccessAsync("User details successfully updated.");
+            return await ResponseWrapper<string>.SuccessAsync("[ML67] User details successfully updated.");
 
         return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
@@ -216,7 +216,7 @@ public class UserService : IUserService
         {
             if (userInDb.Email == AppCredentials.Email)
             {
-                return await ResponseWrapper.FailAsync("User Roles update not permitted.");
+                return await ResponseWrapper.FailAsync("[ML68] User Roles update not permitted.");
             }
             var currentAssignedRoles = await _userManager.GetRolesAsync(userInDb);
             var rolesToBeAssigned = request.Roles
@@ -238,15 +238,15 @@ public class UserService : IUserService
                         .AddToRolesAsync(userInDb, rolesToBeAssigned.Select(role => role.RoleName));
                     if (identityResult2.Succeeded)
                     {
-                        return await ResponseWrapper<string>.SuccessAsync("User Roles Updated Successfully.");
+                        return await ResponseWrapper<string>.SuccessAsync("[ML69] User Roles Updated Successfully.");
                     }
                     return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult2));
                 }
                 return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult1));
             }
-            return await ResponseWrapper.FailAsync("User Roles update not permitted.");
+            return await ResponseWrapper.FailAsync("[ML70] User Roles update not permitted.");
         }
-        return await ResponseWrapper.FailAsync("User does not exist.");
+        return await ResponseWrapper.FailAsync("[ML71] User does not exist.");
     }
 
     private List<string> GetIdentityResultErrorDescriptions(IdentityResult identityResult)
@@ -263,12 +263,12 @@ public class UserService : IUserService
     {
 
         var userInDb = await _userManager.FindByNameAsync(request.UserName);
-        if (userInDb == null) return await ResponseWrapper.FailAsync("User does not exist.");
+        if (userInDb == null) return await ResponseWrapper.FailAsync("[ML72] User does not exist.");
 
         var identityResult = await _userManager.DeleteAsync(userInDb);
         if (!identityResult.Succeeded)
             return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
-        return await ResponseWrapper<string>.SuccessAsync("User successfully deleted.");
+        return await ResponseWrapper<string>.SuccessAsync("[ML73] User successfully deleted.");
     }
 
 }

@@ -44,9 +44,9 @@ public class UpdateLinkCommandHandler : IRequestHandler<UpdateLinkCommand, IResp
             var mappedLink = _mapper.Map<LinkResponse>(updatedLink);
 
             return await ResponseWrapper<LinkResponse>
-                .SuccessAsync(mappedLink, "[ML_03] Link updated successfully");
+                .SuccessAsync(mappedLink, "[ML22] Link updated successfully");
         }
         return await ResponseWrapper<LinkResponse>
-            .FailAsync("[ML_04] Link does not exist.");
+            .FailAsync("[ML23] Link does not exist.");
     }
 }

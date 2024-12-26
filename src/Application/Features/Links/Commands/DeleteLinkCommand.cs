@@ -25,11 +25,11 @@ public class DeleteLinkCommandHandler :
         if (linkInDb is not null)
         {
             var linkId = await _linkService.DeleteLinkAsync(linkInDb);
-            return await ResponseWrapper<int>.SuccessAsync(linkId, "[ML_01] Link entry deleted successfully.");
+            return await ResponseWrapper<int>.SuccessAsync(linkId, "[ML20] Link entry deleted successfully.");
         }
         else
         {
-            return await ResponseWrapper.FailAsync("[ML_02] Link does not exist.");
+            return await ResponseWrapper.FailAsync("[ML21] Link does not exist.");
         }
     }
 }

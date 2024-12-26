@@ -34,7 +34,7 @@ public class RoleService : IRoleService
     {
         var roleExist = await _roleManager.FindByNameAsync(request.RoleName);
         if (roleExist != null)
-            return await ResponseWrapper<string>.FailAsync("Role already exists.");
+            return await ResponseWrapper<string>.FailAsync("[ML28] Role already exists.");
 
         var newRole = new ApplicationRole
         {
@@ -47,23 +47,23 @@ public class RoleService : IRoleService
             return await ResponseWrapper<string>
                 .FailAsync(GetIdentityResultErrorDescriptions(identityResult));
 
-        return await ResponseWrapper<string>.SuccessAsync("Role created successfully");
+        return await ResponseWrapper<string>.SuccessAsync("[ML29] Role created successfully");
     }
 
     public async Task<IResponseWrapper> DeleteRoleAsync(string roleId)
     {
         var roleInDb = await _roleManager.FindByIdAsync(roleId);
         if (roleInDb is null)
-            return await ResponseWrapper.FailAsync("Role does not exist.");
+            return await ResponseWrapper.FailAsync("[ML30] Role does not exist.");
         if (roleInDb.Name == AppRoles.Admin)
-            return await ResponseWrapper.FailAsync("Role delete not permitted.");
+            return await ResponseWrapper.FailAsync("[ML31] Role delete not permitted.");
 
         var allUsers = await _userManager.Users.ToListAsync();
         foreach (var user in allUsers)
         {
             if (await _userManager.IsInRoleAsync(user, roleInDb.Name))
                 return await ResponseWrapper
-                    .FailAsync($"Role: {roleInDb.Name} is currently assigned to a user.");
+                    .FailAsync($"[ML32] Role: {roleInDb.Name} is currently assigned to a user.");
         }
 
         var identityResult = await _roleManager.DeleteAsync(roleInDb);
@@ -71,14 +71,14 @@ public class RoleService : IRoleService
             return await ResponseWrapper<string>
                 .FailAsync(GetIdentityResultErrorDescriptions(identityResult));
 
-        return await ResponseWrapper<string>.SuccessAsync("Role deleted successfully");
+        return await ResponseWrapper<string>.SuccessAsync("[ML33] Role deleted successfully");
     }
 
     public async Task<IResponseWrapper> GetRoleByIdAsync(string roleId)
     {
         var roleInDb = await _roleManager.FindByIdAsync(roleId);
         if (roleInDb is null)
-            return await ResponseWrapper.FailAsync("No role was found.");
+            return await ResponseWrapper.FailAsync("[ML34] No role was found.");
 
         var mappedRole = _mapper.Map<RoleResponse>(roleInDb);
         return await ResponseWrapper<RoleResponse>.SuccessAsync(mappedRole);
@@ -88,7 +88,7 @@ public class RoleService : IRoleService
     {
         var roleInDb = await _roleManager.FindByIdAsync(roleId);
         if (roleInDb is null)
-            return await ResponseWrapper<RoleClaimResponse>.FailAsync("No role was found.");
+            return await ResponseWrapper<RoleClaimResponse>.FailAsync("[ML35] No role was found.");
 
         var allPermissions = AppPermissions.AllPermissions;
         var roleClaimResponse = new RoleClaimResponse
@@ -142,7 +142,7 @@ public class RoleService : IRoleService
     {
         var allRoles = await _roleManager.Roles.ToListAsync();
         if (allRoles.Count < 1)
-            return await ResponseWrapper<string>.FailAsync("No roles were found.");
+            return await ResponseWrapper<string>.FailAsync("[ML36] No roles were found.");
 
         var mappedRoles = _mapper.Map<List<RoleResponse>>(allRoles);
         return await ResponseWrapper<List<RoleResponse>>.SuccessAsync(mappedRoles);
@@ -152,9 +152,9 @@ public class RoleService : IRoleService
     {
         var roleInDb = await _roleManager.FindByIdAsync(request.RoleId);
         if (roleInDb is null)
-            return await ResponseWrapper.FailAsync("Role does not exist.");
+            return await ResponseWrapper.FailAsync("[ML37] Role does not exist.");
         if (roleInDb.Name == AppRoles.Admin)
-            return await ResponseWrapper.FailAsync("Role update not permitted.");
+            return await ResponseWrapper.FailAsync("[ML38] Role update not permitted.");
 
         roleInDb.Name = request.RoleName;
         roleInDb.Description = request.RoleDescription;
@@ -182,9 +182,9 @@ public class RoleService : IRoleService
     {
         var roleInDb = await _roleManager.FindByIdAsync(request.RoleId);
         if (roleInDb is null)
-            return await ResponseWrapper.FailAsync("Role does not exist.");
+            return await ResponseWrapper.FailAsync("[ML39] Role does not exist.");
         if (roleInDb.Name == AppRoles.Admin)
-            return await ResponseWrapper.FailAsync("Changing role permission is not allowed.");
+            return await ResponseWrapper.FailAsync("[ML40] Changing role permission is not allowed.");
         var permissionsToBeAssigned = request.RoleClaims
             .Where(x => x.IsAssignedToRole == true).ToList();
         var currentlyAssignedClaims = await _roleManager.GetClaimsAsync(roleInDb);
@@ -198,6 +198,6 @@ public class RoleService : IRoleService
             await _dbContext.RoleClaims.AddAsync(mappedRoleClaim);
         }
         await _dbContext.SaveChangesAsync();
-        return await ResponseWrapper<string>.SuccessAsync("Role permissions updated successfully.");
+        return await ResponseWrapper<string>.SuccessAsync("[ML41] Role permissions updated successfully.");
     }
 }

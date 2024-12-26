@@ -121,6 +121,6 @@ public class LinkService : ILinkService
         linkInDb.IsDeleted = true;
         _context.Links.Update(linkInDb);
         await _context.SaveChangesAsync();
-        return ResponseWrapper.Success("Link successfully deleted.");
+        return ResponseWrapper.Success("[ML74] Link successfully deleted.");
     }
 }

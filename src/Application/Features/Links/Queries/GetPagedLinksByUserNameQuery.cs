@@ -33,7 +33,7 @@ public class GetPagedLinksByUserNameQueryHandler : IRequestHandler<GetPagedLinks
     {
         if (request.Parameters.UserName == null)
             return await ResponseWrapper<PaginationResult<LinkResponse>>
-                .FailAsync("User does not exist");
+                .FailAsync("[ML26] User does not exist");
 
         var pagedResult = await _linkService.GetPagedLinksByUserNameAsync(request.Parameters);
         var mappedItems = _mapper.Map<IEnumerable<LinkResponse>>(pagedResult.Items);
