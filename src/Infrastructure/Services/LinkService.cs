@@ -1,5 +1,6 @@
 ﻿using Application.Extensions;
 using Application.Services;
+using Application.Services.Identity;
 using Common.Requests.Identity;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
@@ -8,16 +9,19 @@ using Domain;
 using Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Infrastructure.Services;
 
 public class LinkService : ILinkService
 {
     private readonly ApplicationDbContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
-    public LinkService(ApplicationDbContext context)
+    public LinkService(ApplicationDbContext context, ICurrentUserService currentUserService)
     {
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<Link> CreateLinkAsync(Link link)
@@ -96,8 +100,7 @@ public class LinkService : ILinkService
                 x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
-
- 
+        
         query = query.SortLink(parameters.OrderBy);
 
         var totalCount = await query.CountAsync();
@@ -123,4 +126,34 @@ public class LinkService : ILinkService
         await _context.SaveChangesAsync();
         return ResponseWrapper.Success("[ML74] Link successfully deleted.");
     }
+
+    public async Task<IResponseWrapper> LikeLinkAsync(LikeLinkRequest request, CancellationToken cancellationToken)
+    {
+        var isLiked = await _context.Likes.FirstOrDefaultAsync(x => x.LinkId == request.LinkId && x.UserId == _currentUserService.UserId);
+        var link = await _context.Links.FirstOrDefaultAsync(x => x.Id == request.LinkId);
+
+        if (isLiked != null)
+        {
+            link.LikeCount -= 1;
+            _context.Likes.Remove(isLiked);
+            await _context.SaveChangesAsync(cancellationToken);
+            return ResponseWrapper.Success("[ML80] Link successfully unliked.");
+        }
+           
+
+        var like = new Like
+        {
+            UserId = _currentUserService.UserId,
+            LinkId = request.LinkId,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Likes.Add(like);
+        link.LikeCount += 1;
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return ResponseWrapper.Success("[ML79] Link successfully liked.");
+        
+    }
+
 }

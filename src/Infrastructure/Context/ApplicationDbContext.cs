@@ -6,7 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string,
+public class ApplicationDbContext : IdentityDbContext<
+        ApplicationUser,
+        ApplicationRole,
+        string,
         IdentityUserClaim<string>,
         IdentityUserRole<string>,
         IdentityUserLogin<string>,
@@ -31,5 +34,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     }
 
     public DbSet<Link> Links => Set<Link>();
+    public DbSet<Like> Likes { get; set; }
 
 }

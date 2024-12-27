@@ -90,29 +90,14 @@ public class LinksController : MyBaseController<LinksController>
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
+
+
+    [HttpPost("like")]
+    [MustHavePermission(AppFeature.Links, AppAction.Read)]
+    public async Task<IActionResult> Like([FromBody] LikeLinkRequest request)
+    {
+        var response = await MediatorSender.Send(new LikeCommand { LikeRequest = request });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
 }
-
-
-
-
-
-
-
-
-
-//headerde değer gönderme.
-// Pagination bilgilerini JSON formatında oluştur
-//var totalPages = result.ResponseData.TotalCount > 0 ? (int)Math
-//    .Ceiling((double)result.ResponseData.TotalCount / result.ResponseData.ItemsPerPage) : 0;
-//var paginationHeader = new
-//{
-//    current_page = result.ResponseData.Page,
-//    items_per_page = result.ResponseData.ItemsPerPage,
-//    total_items = result.ResponseData.TotalCount,
-//    total_pages = totalPages,
-//    has_previous_page = result.ResponseData.HasPreviousPage,
-//    has_next_page = result.ResponseData.HasNextPage
-//};
-// Header'a ekle
-//Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(paginationHeader));
-// return Ok(result.ResponseData.Items);

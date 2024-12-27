@@ -74,16 +74,16 @@ public class ApplicationDbSeeeder
         {
             FirstName = "Mustafa",
             LastName = "Toprak",
-            Email = "mustafa@mail.com",
+            Email = "mustafatoprak@gmail.com",
             UserName = "mustafatoprak",
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
-            NormalizedEmail = "MUSTAFA@MAIL.COM",
+            NormalizedEmail = "MUSTAFATOPRAK@GMAIL.COM",
             NormalizedUserName = "MUSTAFATOPRAK",
             IsActive = true
         };
 
-        if (!await _userManager.Users.AnyAsync(u => u.Email == "mustafa@mail.com"))
+        if (!await _userManager.Users.AnyAsync(u => u.Email == "mustafatoprak@gmail.com"))
         {
             var password = new PasswordHasher<ApplicationUser>();
             basicUser.PasswordHash = password.HashPassword(basicUser, AppCredentials.Password);
