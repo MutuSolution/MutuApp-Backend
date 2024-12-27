@@ -1,8 +1,10 @@
 ﻿using Application.Extensions;
 using Application.Services;
 using Application.Services.Identity;
+using Azure.Core;
 using Common.Requests.Identity;
 using Common.Requests.Links;
+using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
 using Domain;
@@ -132,6 +134,9 @@ public class LinkService : ILinkService
         var isLiked = await _context.Likes.FirstOrDefaultAsync(x => x.LinkId == request.LinkId && x.UserId == _currentUserService.UserId);
         var link = await _context.Links.FirstOrDefaultAsync(x => x.Id == request.LinkId);
 
+        if (link == null)
+            return await ResponseWrapper.FailAsync("[ML81] Link does not found.");
+
         if (isLiked != null)
         {
             link.LikeCount -= 1;
@@ -155,5 +160,4 @@ public class LinkService : ILinkService
         return ResponseWrapper.Success("[ML79] Link successfully liked.");
         
     }
-
 }
