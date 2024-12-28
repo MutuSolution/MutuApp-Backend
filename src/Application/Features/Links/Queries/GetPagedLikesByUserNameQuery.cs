@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Links.Queries;
 
-public class GetPagedLikesByUserNameQuery : IRequest<IResponseWrapper<PaginationResult<LikePaginationResponse>>>
+public class GetPagedLikesByUserNameQuery : IRequest<IResponseWrapper<PaginationResult<LinkResponse>>>
 {
     public LikesByUserNameParameters Parameters { get; set; } = new LikesByUserNameParameters();
 }
 
-public class GetPagedLikesByUserNameQueryHandler : IRequestHandler<GetPagedLikesByUserNameQuery, IResponseWrapper<PaginationResult<LikePaginationResponse>>>
+public class GetPagedLikesByUserNameQueryHandler : IRequestHandler<GetPagedLikesByUserNameQuery, IResponseWrapper<PaginationResult<LinkResponse>>>
 {
     private readonly ILinkService _linkService;
     private readonly IMapper _mapper;
@@ -29,17 +29,17 @@ public class GetPagedLikesByUserNameQueryHandler : IRequestHandler<GetPagedLikes
         _mapper = mapper;
     }
 
-    async Task<IResponseWrapper<PaginationResult<LikePaginationResponse>>> IRequestHandler<GetPagedLikesByUserNameQuery, IResponseWrapper<PaginationResult<LikePaginationResponse>>>.Handle(GetPagedLikesByUserNameQuery request, CancellationToken cancellationToken)
+    async Task<IResponseWrapper<PaginationResult<LinkResponse>>> IRequestHandler<GetPagedLikesByUserNameQuery, IResponseWrapper<PaginationResult<LinkResponse>>>.Handle(GetPagedLikesByUserNameQuery request, CancellationToken cancellationToken)
     {
         if (request.Parameters.UserName == null)
-            return await ResponseWrapper<PaginationResult<LikePaginationResponse>>
+            return await ResponseWrapper<PaginationResult<LinkResponse>>
                 .FailAsync("[ML84] Like does not exist");
 
         var pagedResult = await _linkService.GetPagedLikesByUserNameAsync(request.Parameters);
-        var mappedItems = _mapper.Map<IEnumerable<LikePaginationResponse>>(pagedResult.Items);
+        var mappedItems = _mapper.Map<IEnumerable<LinkResponse>>(pagedResult.Items);
 
-        return await ResponseWrapper<PaginationResult<LikePaginationResponse>>
-        .SuccessAsync(new PaginationResult<LikePaginationResponse>(
+        return await ResponseWrapper<PaginationResult<LinkResponse>>
+        .SuccessAsync(new PaginationResult<LinkResponse>(
             mappedItems,
             pagedResult.TotalCount,
             pagedResult.TotalPage,

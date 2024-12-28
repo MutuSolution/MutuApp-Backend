@@ -1,5 +1,6 @@
 ﻿using Common.Requests.Identity;
 using Common.Requests.Links;
+using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
 using Domain;
@@ -18,5 +19,5 @@ public interface ILinkService
     Task<IResponseWrapper> IsLike(int id, CancellationToken cancellationToken);
     Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters);
     Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
-    Task<PaginationResult<Like>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters);
+    Task<PaginationResult<LinkResponse>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters);
 }

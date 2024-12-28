@@ -12,6 +12,6 @@ public class MappingProfiles : Profile
         CreateMap<CreateLinkRequest, Link>();
         CreateMap<Link, LinkResponse>();
         CreateMap<Like, LikeResponse>().ReverseMap();
-        CreateMap<Like, LikePaginationResponse>();
+        CreateMap<Like, LinkResponse>();
     }
 }

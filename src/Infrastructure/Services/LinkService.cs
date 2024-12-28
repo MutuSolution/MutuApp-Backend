@@ -120,9 +120,9 @@ public class LinkService : ILinkService
 
 
 
-    public async Task<PaginationResult<Like>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters)
+    public async Task<PaginationResult<LinkResponse>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters)
     {
-        var query = _context.Set<Like>().AsQueryable()
+        var query = _context.Set<Like>().Include(l => l.Link).AsQueryable()
             .Where(x =>
                 // Filtering
                 (x.UserName == parameters.UserName) &&
@@ -141,9 +141,20 @@ public class LinkService : ILinkService
         var items = await query
                 .Skip(parameters.Skip)
                 .Take(parameters.ItemsPerPage)
+                 .Select(link => new LinkResponse
+                 {
+                     Id = link.Link.Id,
+                     Title = link.Link.Title,
+                     Url = link.Link.Url,
+                     UserName = link.Link.UserName,
+                     Description = link.Link.Description,
+                     IsPublic = link.Link.IsPublic,
+                     IsDeleted = link.Link.IsDeleted,
+                     LikeCount = link.Link.LikeCount
+                 })
                 .ToListAsync();
 
-        return new PaginationResult<Like>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+        return new PaginationResult<LinkResponse>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
     public async Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request)
