@@ -15,6 +15,8 @@ public interface ILinkService
     Task<int> DeleteLinkAsync(Link link);
     Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request);
     Task<IResponseWrapper> LikeLinkAsync(LikeLinkRequest request, CancellationToken cancellationToken);
+    Task<IResponseWrapper> IsLike(int id, CancellationToken cancellationToken);
     Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters);
     Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
+    Task<PaginationResult<Like>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters);
 }

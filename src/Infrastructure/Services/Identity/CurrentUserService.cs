@@ -20,4 +20,12 @@ public class CurrentUserService : ICurrentUserService
                 .FindFirst("id")?.Value ?? "0";
         }
     }
+    public string UserName
+    {
+        get
+        {
+            return _httpContextAccessor.HttpContext?.User?
+                .FindFirst("username")?.Value ?? "user";
+        }
+    }
 }

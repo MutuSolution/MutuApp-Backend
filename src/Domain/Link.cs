@@ -10,4 +10,7 @@ public class Link
     public bool IsPublic { get; set; } = true;
     public bool IsDeleted { get; set; } = false;
     public int LikeCount { get; set; } = 0;
+
+    // Navigation Property
+    public ICollection<Like> Likes { get; set; }
 }

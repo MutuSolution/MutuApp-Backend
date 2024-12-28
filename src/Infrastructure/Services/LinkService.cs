@@ -118,7 +118,33 @@ public class LinkService : ILinkService
         return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
- 
+
+
+    public async Task<PaginationResult<Like>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters)
+    {
+        var query = _context.Set<Like>().AsQueryable()
+            .Where(x =>
+                // Filtering
+                (x.UserName == parameters.UserName) &&
+                (string.IsNullOrEmpty(parameters.SearchTerm) ||
+                // Searching with case-insensitive comparison
+                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower())
+              ));
+
+        query = query.SortLike(parameters.OrderBy);
+
+        var totalCount = await query.CountAsync();
+        var totalPage = totalCount > 0 ?
+            (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
+        if (totalCount == 0) parameters.ItemsPerPage = 0;
+
+        var items = await query
+                .Skip(parameters.Skip)
+                .Take(parameters.ItemsPerPage)
+                .ToListAsync();
+
+        return new PaginationResult<Like>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+    }
 
     public async Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request)
     {
@@ -131,24 +157,24 @@ public class LinkService : ILinkService
 
     public async Task<IResponseWrapper> LikeLinkAsync(LikeLinkRequest request, CancellationToken cancellationToken)
     {
-        var isLiked = await _context.Likes.FirstOrDefaultAsync(x => x.LinkId == request.LinkId && x.UserId == _currentUserService.UserId);
+        var isLiked = await _context.Likes.FirstOrDefaultAsync(x => x.LinkId == request.LinkId && x.UserName == _currentUserService.UserName);
         var link = await _context.Links.FirstOrDefaultAsync(x => x.Id == request.LinkId);
 
         if (link == null)
-            return await ResponseWrapper.FailAsync("[ML81] Link does not found.");
+            return await ResponseWrapper.FailAsync("[ML82] Link does not found.");
 
         if (isLiked != null)
         {
             link.LikeCount -= 1;
             _context.Likes.Remove(isLiked);
             await _context.SaveChangesAsync(cancellationToken);
-            return ResponseWrapper.Success("[ML80] Link successfully unliked.");
+            return ResponseWrapper.Success("[ML83] Link successfully unliked.");
         }
            
 
         var like = new Like
         {
-            UserId = _currentUserService.UserId,
+            UserName = _currentUserService.UserName,
             LinkId = request.LinkId,
             CreatedAt = DateTime.UtcNow
         };
@@ -159,5 +185,21 @@ public class LinkService : ILinkService
 
         return ResponseWrapper.Success("[ML79] Link successfully liked.");
         
+    }
+
+
+    public async Task<IResponseWrapper> IsLike(int id, CancellationToken cancellationToken)
+    {
+        var isLiked = await _context.Likes
+            .FirstOrDefaultAsync(x => x.LinkId == id && x.UserName == _currentUserService.UserName);
+        var link = await _context.Links.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (link == null)
+            return await ResponseWrapper.FailAsync("[ML81] Link does not found.");
+
+        if (isLiked is null)
+            return ResponseWrapper.Success("[ML80] Link unliked.");
+        
+        return ResponseWrapper.Success("[ML79] Link liked.");
     }
 }

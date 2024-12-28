@@ -90,14 +90,4 @@ public class LinksController : MyBaseController<LinksController>
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }
-
-
-    [HttpPost("like")]
-    [MustHavePermission(AppFeature.Links, AppAction.Read)]
-    public async Task<IActionResult> Like([FromBody] LikeLinkRequest request)
-    {
-        var response = await MediatorSender.Send(new LikeCommand { LikeRequest = request });
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
-    }
 }

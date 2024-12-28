@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain;
+﻿namespace Domain;
 
 public class Like
 {
     public int Id { get; set; }
-    public string UserId { get; set; }
+    public string UserName { get; set; }
     public int LinkId { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    // Navigation Property
+    public Link Link { get; set; }
 }
