@@ -23,18 +23,6 @@ public class AuthController : MyBaseController<AuthController>
         return BadRequest(response);
     }
 
-    [HttpPost("confirm-email")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmRequest request)
-    {
-
-        var response = await MediatorSender.Send(new GetEmailConfirmQuery { EmailConfirmRequest = request });
-        if (response.IsSuccessful)
-        {
-            return Ok(response);
-        }
-        return BadRequest(response);
-    }
 
     [HttpPost("refresh-token")]
     [AllowAnonymous]

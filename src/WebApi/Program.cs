@@ -26,7 +26,7 @@ builder.Services
 builder.Services.AddIdentityServices();
 builder.Services.AddLinkService();
 builder.Services.AddInfrastructureDependencies();
-
+builder.Services.AddEmailService();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterSwagger();
 builder.Services.AddMemoryCache();

@@ -39,6 +39,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddEmailService(this IServiceCollection services)
+    {
+        services
+            .AddTransient<IEmailService, EmailService>();
+        return services;
+    }
     public static void AddInfrastructureDependencies(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

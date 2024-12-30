@@ -8,6 +8,6 @@ public interface ITokenService
 {
     Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest);
     Task<ResponseWrapper<TokenResponse>> GetRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
-    Task<IResponseWrapper> GetEmailConfirmAsync(EmailConfirmRequest emailConfirmRequest);
+   
 }
 

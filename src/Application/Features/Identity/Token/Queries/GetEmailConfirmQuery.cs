@@ -17,15 +17,15 @@ public class GetEmailConfirmQuery : IRequest<IResponseWrapper>
 
 public class GetEmailConfirmQueryHandler : IRequestHandler<GetEmailConfirmQuery, IResponseWrapper>
 {
-    private readonly ITokenService _tokenService;
+    private readonly IEmailService _emailService;
 
-    public GetEmailConfirmQueryHandler(ITokenService tokenService)
+    public GetEmailConfirmQueryHandler(IEmailService emailService)
     {
-        _tokenService = tokenService;
+        _emailService = emailService;
     }
 
     public async Task<IResponseWrapper> Handle(GetEmailConfirmQuery request, CancellationToken cancellationToken)
     {
-        return await _tokenService.GetEmailConfirmAsync(request.EmailConfirmRequest);
+        return await _emailService.GetEmailConfirmAsync(request.EmailConfirmRequest);
     }
 }
