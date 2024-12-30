@@ -35,7 +35,8 @@ public class TokenService : ITokenService
         if (tokenRequest.Email is not null)
         {
             user = await _userManager.FindByEmailAsync(tokenRequest.Email);
-        }else
+        }
+        else
         {
             user = await _userManager.FindByNameAsync(tokenRequest.UserName);
         }

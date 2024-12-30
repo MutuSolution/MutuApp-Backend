@@ -31,7 +31,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterSwagger();
 builder.Services.AddMemoryCache();
 builder.Services.ConfigureRateLimitingOptions();
-builder.Services.AddHttpContextAccessor();  
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();

@@ -1,9 +1,7 @@
 ﻿using Application.Features.Identity.Token.Queries;
 using Application.Features.Identity.Users.Commands;
 using Common.Requests.Identity;
-using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Identity;
@@ -50,7 +48,7 @@ public class AuthController : MyBaseController<AuthController>
     [HttpGet("logout")]
     public async Task<IActionResult> LogoutAsync()
     {
-
+        await Task.CompletedTask;
         return Ok();
     }
 }

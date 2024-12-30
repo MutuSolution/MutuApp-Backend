@@ -1,7 +1,6 @@
 ﻿using Application.Extensions;
 using Application.Services.Identity;
 using AutoMapper;
-using Azure.Core;
 using Common.Authorization;
 using Common.Requests.Identity;
 using Common.Responses.Identity;
@@ -11,7 +10,6 @@ using Domain;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Services.Identity;
 

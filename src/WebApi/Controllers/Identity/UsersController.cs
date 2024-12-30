@@ -1,6 +1,5 @@
 ﻿using Application.Features.Identity.Users.Commands;
 using Application.Features.Identity.Users.Queries;
-using Application.Features.Links.Queries;
 using Common.Authorization;
 using Common.Requests.Identity;
 using Common.Responses.Pagination;

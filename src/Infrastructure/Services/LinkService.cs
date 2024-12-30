@@ -1,17 +1,13 @@
 ﻿using Application.Extensions;
 using Application.Services;
 using Application.Services.Identity;
-using Azure.Core;
-using Common.Requests.Identity;
 using Common.Requests.Links;
 using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
 using Domain;
 using Infrastructure.Context;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace Infrastructure.Services;
 
@@ -102,11 +98,11 @@ public class LinkService : ILinkService
                 x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
                 x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
-        
+
         query = query.SortLink(parameters.OrderBy);
 
         var totalCount = await query.CountAsync();
-        var totalPage = totalCount > 0 ? 
+        var totalPage = totalCount > 0 ?
             (int)Math.Ceiling((double)totalCount / parameters.ItemsPerPage) : 0;
         if (totalCount == 0) parameters.ItemsPerPage = 0;
 
@@ -181,7 +177,7 @@ public class LinkService : ILinkService
             await _context.SaveChangesAsync(cancellationToken);
             return ResponseWrapper.Success("[ML83] Link successfully unliked.");
         }
-           
+
 
         var like = new Like
         {
@@ -195,7 +191,7 @@ public class LinkService : ILinkService
         await _context.SaveChangesAsync(cancellationToken);
 
         return ResponseWrapper.Success("[ML79] Link successfully liked.");
-        
+
     }
 
 
@@ -210,7 +206,7 @@ public class LinkService : ILinkService
 
         if (isLiked is null)
             return ResponseWrapper.Success("[ML80] Link unliked.");
-        
+
         return ResponseWrapper.Success("[ML79] Link liked.");
     }
 }

@@ -1,16 +1,12 @@
 ﻿namespace WebApi.Controllers;
 
-using Application.Features.Identity.Users.Commands;
 using Application.Features.Links.Commands;
 using Application.Features.Links.Queries;
 using Common.Authorization;
-using Common.Requests.Identity;
 using Common.Requests.Links;
 using Common.Responses.Pagination;
 using global::WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using WebApi.Attributes;
 
 [Route("api/[controller]")]
 public class LikesController : MyBaseController<LikesController>

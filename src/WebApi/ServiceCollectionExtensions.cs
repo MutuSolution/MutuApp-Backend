@@ -191,7 +191,8 @@ namespace WebApi
               }
             };
 
-            services.Configure<IpRateLimitOptions>(opt => {
+            services.Configure<IpRateLimitOptions>(opt =>
+            {
                 opt.GeneralRules = rateLimitRules;
             });
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
