@@ -1,5 +1,6 @@
 ﻿using Application.AppConfigs;
 using Application.Services.Identity;
+using Azure;
 using Common.Requests.Identity;
 using Common.Responses;
 using Common.Responses.Wrappers;
@@ -204,5 +205,23 @@ public class TokenService : ITokenService
         }
 
         return principal;
+    }
+
+    public async Task<IResponseWrapper> GetEmailConfirmAsync(EmailConfirmRequest emailConfirmRequest)
+    {
+        if (emailConfirmRequest.Code is null)
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML85] Code required.");
+        if (emailConfirmRequest.Email is null)
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML86] Email required.");
+
+        var user = await _userManager.FindByEmailAsync(emailConfirmRequest.Email);
+        if (user is null)
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML87] User not found.");
+
+        var isVerified = await _userManager.ConfirmEmailAsync(user, emailConfirmRequest.Code);
+        if (!isVerified.Succeeded)
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML88] Email not confirmed.");
+
+        return await ResponseWrapper<TokenResponse>.SuccessAsync("[ML89] Email confirmed.");
     }
 }

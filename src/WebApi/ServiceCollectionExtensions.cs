@@ -46,7 +46,14 @@ namespace WebApi
                     options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
+
                     options.User.RequireUniqueEmail = true;
+
+                    options.SignIn.RequireConfirmedEmail = true;
+                    options.SignIn.RequireConfirmedAccount = true;
+
+                    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -65,7 +72,7 @@ namespace WebApi
                 })
                 .AddJwtBearer(bearer =>
                 {
-                    bearer.RequireHttpsMetadata = false;
+                    bearer.RequireHttpsMetadata = false;//YG!
                     bearer.SaveToken = true;
                     bearer.TokenValidationParameters = new TokenValidationParameters
                     {

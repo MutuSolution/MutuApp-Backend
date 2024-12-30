@@ -173,7 +173,7 @@ public class UserService : IUserService
             Email = request.Email,
             UserName = request.UserName,
             IsActive = true,
-            EmailConfirmed = true
+            EmailConfirmed = false
         };
         var password = new PasswordHasher<ApplicationUser>();
         newUser.PasswordHash = password.HashPassword(newUser, request.Password);
@@ -184,7 +184,11 @@ public class UserService : IUserService
         {
             //Assing user to basic role
             await _userManager.AddToRoleAsync(newUser, AppRoles.Basic);
-            return await ResponseWrapper<string>.SuccessAsync("[ML65] User registered successfully.");
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+
+
+            return await ResponseWrapper<string>
+                .SuccessAsync($"[ML65] User registered successfully, please confirm your email with the code that you have received. {code}");
         }
         else
         {
