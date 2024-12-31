@@ -207,6 +207,6 @@ public class LinkService : ILinkService
         if (isLiked is null)
             return ResponseWrapper.Success("[ML80] Link unliked.");
 
-        return ResponseWrapper.Success("[ML79] Link liked.");
+        return ResponseWrapper.Success("[ML45] Link liked.");
     }
 }

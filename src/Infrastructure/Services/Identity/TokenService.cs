@@ -52,7 +52,7 @@ public class TokenService : ITokenService
 
         if (await _userManager.IsLockedOutAsync(user))
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("[ML96] User not active. Please try again later.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML44] User not active. Please try again later.");
         }
 
         if (!await _userManager.CheckPasswordAsync(user, tokenRequest.Password))
@@ -186,7 +186,7 @@ public class TokenService : ITokenService
             || !jwtSecurityToken.Header.Alg
             .Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new SecurityTokenException("[ML50] Invalid token");
+            throw new SecurityTokenException("[ML50] Invalid token.");
         }
 
         return principal;

@@ -27,7 +27,7 @@ public class GetPagedLikesByUserNameQueryHandler : IRequestHandler<GetPagedLikes
     {
         if (request.Parameters.UserName == null)
             return await ResponseWrapper<PaginationResult<LinkResponse>>
-                .FailAsync("[ML84] Like does not exist");
+                .FailAsync("[ML84] Like does not exist.");
 
         var pagedResult = await _linkService.GetPagedLikesByUserNameAsync(request.Parameters);
         var mappedItems = _mapper.Map<IEnumerable<LinkResponse>>(pagedResult.Items);

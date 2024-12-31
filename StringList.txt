@@ -1,0 +1,95 @@
+[ML1] Email cannot be null.
+[ML2] Email cannot be empty.
+[ML3] Invalid email format.
+[ML4] Email domain is not allowed.
+[ML5] Email cannot exceed 200 characters.
+[ML6] Email is already taken.
+[ML7] Username cannot be null.
+[ML8] Username cannot be empty.
+[ML9] Username must be at least 4 characters long.
+[ML10] Username cannot exceed 20 characters.
+[ML11] Username can only contain letters, numbers, underscores, and periods.
+[ML12] Username cannot contain spaces.
+[ML13] Username contains forbidden words.
+[ML14] Username is already taken.
+[ML15] Password must be at least 8 characters long.
+[ML16] Password cannot be empty.
+[ML17] Password confirmation does not match.
+[ML18] Link created successfully.
+[ML19] Failed to create link entry.
+[ML20] Link entry deleted successfully.
+[ML21] Link does not exist.
+[ML22] Link updated successfully
+[ML23] Link does not exist.
+[ML24] Link does not exist.
+[ML25] No links were found.
+[ML26] User does not exist.
+[ML27] Link does not exit.
+[ML28] Role already exists.
+[ML29] Role created successfully.
+[ML30] Role does not exist.
+[ML31] Role delete not permitted.
+[ML32] Role: {roleInDb.Name} is currently assigned to a user.
+[ML33] Role deleted successfully.
+[ML34] No role was found.
+[ML35] No role was found.
+[ML36] No roles were found.
+[ML37] Role does not exist.
+[ML38] Role update not permitted.
+[ML39] Role does not exist.
+[ML40] Changing role permission is not allowed.
+[ML41] Role permissions updated successfully.
+[ML42] Invalid Credentials.
+[ML43] User not active. Please contact the administrator.
+[ML44] User not active. Please try again later.
+[ML45] Link liked.
+[ML46] Invalid Credentials.
+[ML47] Invalid Client Token.
+[ML48] User Not Found.
+[ML49] Invalid Client Token.
+[ML50] Invalid token.
+[ML51] New passwords must be equal.
+[ML52] User does not exist.
+[ML53] User password changed.
+[ML54] User does not exist.
+[ML55] User activated successfully.
+[ML56] User de-activated successfully
+[ML57] No users were found.
+[ML58] User does not exist.
+[ML59] Role not found.
+[ML60] User not found.
+[ML61] User not found.
+[ML62] User not found.
+[ML63] Email already taken.
+[ML64] Username already taken.
+[ML65] User registered successfully, please confirm your email with the code that you have received.
+[ML66] User does not exist.
+[ML67] User details successfully updated.
+[ML68] User Roles update not permitted.
+[ML69] User Roles Updated Successfully.
+[ML70] User Roles update not permitted.
+[ML71] User does not exist.
+[ML72] User does not exist.
+[ML73] User successfully deleted.
+[ML74] Link successfully deleted.
+[ML75] The Token is expired.
+[ML76] An unhandled error has occurred.
+[ML77] You are not Authorized.
+[ML78] You are not authorized to access this resource.
+[ML79] Link successfully liked.
+[ML80] Link unliked.
+[ML81] Link does not found.
+[ML82] Link does not found.
+[ML83] Link successfully unliked.
+[ML84] Like does not exist.
+[ML85] Code required.
+[ML86] Email required.
+[ML87] User not found.
+[ML88] Email not confirmed.
+[ML89] Email confirmed.
+[ML90] Email sending failed:
+[ML91] Email required.
+[ML92] User does not exist.
+[ML93] User already confirmed.
+[ML94] Verification code has been sent.
+[ML95] Email or Username must not be null.
