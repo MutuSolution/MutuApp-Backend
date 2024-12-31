@@ -31,56 +31,41 @@ public class TokenService : ITokenService
 
     public async Task<ResponseWrapper<TokenResponse>> GetTokenAsync(TokenRequest tokenRequest)
     {
-        ApplicationUser user;
-
-        if (tokenRequest.Email is not null)
+        if (tokenRequest.Email is null && tokenRequest.UserName is null)
         {
-            user = await _userManager.FindByEmailAsync(tokenRequest.Email);
-        }
-        else
-        {
-            user = await _userManager.FindByNameAsync(tokenRequest.UserName);
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML95] Email or Username must not be null.");
         }
 
-        // Check user
+        var user = tokenRequest.Email is not null
+            ? await _userManager.FindByEmailAsync(tokenRequest.Email)
+            : await _userManager.FindByNameAsync(tokenRequest.UserName);
+
         if (user is null)
         {
             return await ResponseWrapper<TokenResponse>.FailAsync("[ML42] Invalid Credentials.");
         }
 
-        // Check if Active
-        if (!user.LockoutEnabled)
+        if (!user.LockoutEnabled || !user.IsActive || !user.EmailConfirmed)
         {
-            return await ResponseWrapper<TokenResponse>
-                .FailAsync("[ML43] User not active. Please wait 2 hours.");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML43] User not active. Please contact the administrator.");
         }
 
-        // Check if Active
-        if (!user.IsActive)
+        if (await _userManager.IsLockedOutAsync(user))
         {
-            return await ResponseWrapper<TokenResponse>
-                .FailAsync("[ML44] User not active. Please contact the administrator");
+            return await ResponseWrapper<TokenResponse>.FailAsync("[ML96] User not active. Please try again later.");
         }
-        // Chcek email if email confirmed
-        if (!user.EmailConfirmed)
+
+        if (!await _userManager.CheckPasswordAsync(user, tokenRequest.Password))
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("[ML45] Email not confirmed.");
-        }
-        // Check password
-        var isPaswordValid = await _userManager.CheckPasswordAsync(user, tokenRequest.Password);
-        if (!isPaswordValid)
-        {
+            await _userManager.AccessFailedAsync(user);
             return await ResponseWrapper<TokenResponse>.FailAsync("[ML46] Invalid Credentials.");
         }
-        // generate refresh token
+        await _userManager.ResetAccessFailedCountAsync(user);
         user.RefreshToken = GenerateRefreshToken();
         user.RefreshTokenExpiryDate = DateTime.Now.AddDays(7);
-        // Updated user
         await _userManager.UpdateAsync(user);
 
-        // generate new token
         var token = await GenerateJWTAsync(user);
-        // return
         var response = new TokenResponse
         {
             Token = token,

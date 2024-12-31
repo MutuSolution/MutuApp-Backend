@@ -53,6 +53,10 @@ namespace WebApi
                     options.SignIn.RequireConfirmedAccount = true;
 
                     options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+                    
+                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                    options.Lockout.MaxFailedAccessAttempts = 4;
 
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
