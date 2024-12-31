@@ -1,15 +1,19 @@
 ﻿using Application.AppConfigs;
+using Application.Services;
 using AspNetCoreRateLimit;
 using Common.Authorization;
 using Common.Responses.Wrappers;
 using Infrastructure.Context;
 using Infrastructure.Models;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Reflection;
@@ -34,6 +38,53 @@ namespace WebApi
             return app;
         }
 
+        internal static IServiceCollection AddCustomLocalization(this IServiceCollection services)
+        {
+            services.AddSingleton<LanguageService>();
+            services.AddLocalization(options =>
+            {
+                options.ResourcesPath = "Resources";
+            });
+            services
+                .AddMvc()
+                .AddViewLocalization()
+                .AddDataAnnotationsLocalization(options =>
+
+                options.DataAnnotationLocalizerProvider = (type, factory) =>
+                {
+                    var assemblyName = new AssemblyName(typeof(SharedResource).GetTypeInfo().Assembly.FullName);
+                    return factory.Create(nameof(SharedResource), assemblyName.Name);
+                });
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = CultureInfo
+                    .GetCultures(CultureTypes.SpecificCultures)
+                    .Where(
+                    c => c.TwoLetterISOLanguageName == "en" || 
+                    c.TwoLetterISOLanguageName == "tr").ToList();
+
+                options.DefaultRequestCulture = new RequestCulture(culture: "en" ,uiCulture: "en"); // default
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+                {
+                    var userLangs = context.Request.Headers["Accept-Language"].ToString();
+                    if (!string.IsNullOrEmpty(userLangs))
+                    {
+                        var lang = userLangs.Split(',').FirstOrDefault();
+                        if (supportedCultures.Any(c => c.Name.Equals(lang, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            return Task.FromResult(new ProviderCultureResult(lang));
+                        }
+                    }
+                    return Task.FromResult(new ProviderCultureResult("en"));
+                }));
+
+            });
+
+            return services;
+        }
+
         internal static IServiceCollection AddIdentitySettings(this IServiceCollection services)
         {
             services
@@ -53,7 +104,7 @@ namespace WebApi
                     options.SignIn.RequireConfirmedAccount = true;
 
                     options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
-                    
+
                     options.Lockout.AllowedForNewUsers = true;
                     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                     options.Lockout.MaxFailedAccessAttempts = 4;

@@ -1,10 +1,12 @@
 using Application;
 using AspNetCoreRateLimit;
 using Infrastructure;
+using Microsoft.Extensions.Options;
 using WebApi;
 using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddCors(o =>
     o.AddPolicy("Mutulink Admin", builder =>
@@ -13,7 +15,7 @@ builder.Services.AddCors(o =>
         .AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     }
     ));
-
+builder.Services.AddCustomLocalization();
 builder.Services.AddControllers();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentitySettings();
@@ -46,6 +48,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Mutulink Admin");
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 app.UseIpRateLimiting();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
