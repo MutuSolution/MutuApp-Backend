@@ -48,7 +48,14 @@ public class LinkService : ILinkService
     {
         return await _context.Links.ToListAsync();
     }
-
+    public async Task<List<Link>> GetHomeLinkListAsync()
+    {
+        return await _context.Links
+            .Where(x => (x.IsPublic == true) && (x.IsDeleted == false))
+            .OrderByDescending(x => x.LikeCount)
+            .Take(25)
+            .ToListAsync();
+    }
     public async Task<Link> UpdateLinkAsync(Link link)
     {
         _context.Links.Update(link);
