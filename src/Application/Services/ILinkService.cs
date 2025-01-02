@@ -1,4 +1,5 @@
-﻿using Common.Requests.Links;
+﻿using Application.Features.Links.Queries.Home;
+using Common.Requests.Links;
 using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
@@ -11,6 +12,7 @@ public interface ILinkService
     Task<Link> CreateLinkAsync(Link link);
     Task<List<Link>> GetLinkListAsync();
     Task<List<Link>> GetHomeLinkListAsync();
+    Task<List<Link>> GetPublicLinkWithUsernameAsync(string userName);
     Task<Link> GetLinkByIdAsync(int id);
     Task<Link> UpdateLinkAsync(Link link);
     Task<int> DeleteLinkAsync(Link link);

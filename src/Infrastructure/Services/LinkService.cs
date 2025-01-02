@@ -55,6 +55,19 @@ public class LinkService : ILinkService
             .OrderByDescending(x => x.LikeCount)
             .Take(25)
             .ToListAsync();
+    } 
+    public async Task<List<Link>> GetPublicLinkWithUsernameAsync(string userName)
+    {
+        if (string.IsNullOrEmpty(userName))
+            return new List<Link>();
+        return await _context.Links
+            .Where(x => 
+            (x.IsPublic == true) && 
+            (x.IsDeleted == false) &&
+            (x.UserName.ToLower() == userName.ToLower()))
+            .OrderByDescending(x => x.LikeCount)
+            .Take(25)
+            .ToListAsync();
     }
     public async Task<Link> UpdateLinkAsync(Link link)
     {
