@@ -76,11 +76,16 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(parameters.SearchTerm))
         {
             query = query.Where(x =>
-                EF.Functions.Like(x.FirstName, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(x.LastName, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(x.UserName, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(x.Id, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(x.Email, $"%{parameters.SearchTerm}%"));
+              x.FirstName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+              x.LastName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+              x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+              x.Id.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+              x.Email.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+              string
+              .Concat(x.FirstName, " ", x.LastName).ToLower()
+                .Contains(parameters.SearchTerm.ToLower())
+  );
+
         }
 
         query = (IQueryable<ApplicationUser>)query.Where(x => x.IsActive == parameters.IsActive)
@@ -184,7 +189,7 @@ public class UserService : IUserService
         {
             //Assing user to basic role
             await _userManager.AddToRoleAsync(newUser, AppRoles.Basic);
-            
+
             var message = "[ML65] User registered successfully, please confirm your email with the code that you have received.";
 
             return await ResponseWrapper<string>
