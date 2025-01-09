@@ -95,3 +95,7 @@
 [ML95] Email or Username must not be null.
 [ML96] No links were found.
 [ML97] No links were found.
+[ML98] Username is already taken.
+[ML99] User does not exist.
+[ML100] Email is already taken.
+[ML101] User email successfully updated.

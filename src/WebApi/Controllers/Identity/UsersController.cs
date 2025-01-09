@@ -13,7 +13,6 @@ namespace WebApi.Controllers.Identity;
 public class UsersController : MyBaseController<UsersController>
 {
 
-
     [HttpGet("id/{userId}")]
     [MustHavePermission(AppFeature.Users, AppAction.Read)]
     public async Task<IActionResult> GetUserById(string userId)
@@ -68,6 +67,15 @@ public class UsersController : MyBaseController<UsersController>
     public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserRequest userRequest)
     {
         var response = await MediatorSender.Send(new UpdateUserCommand { UpdateUser = userRequest });
+        if (response.IsSuccessful) return Ok(response);
+        return NotFound(response);
+    }
+
+    [HttpPut("change-email")]
+    [MustHavePermission(AppFeature.Users, AppAction.Update)]
+    public async Task<IActionResult> UpdateUserEmailAsync([FromBody] ChangeEmailRequest request)
+    {
+        var response = await MediatorSender.Send(new UpdateUserEMailCommand { request = request });
         if (response.IsSuccessful) return Ok(response);
         return NotFound(response);
     }

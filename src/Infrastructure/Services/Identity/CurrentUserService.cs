@@ -28,4 +28,13 @@ public class CurrentUserService : ICurrentUserService
                 .FindFirst("username")?.Value ?? "user";
         }
     }
+
+    public string Email
+    {
+        get
+        {
+            return _httpContextAccessor.HttpContext?.User?
+                .FindFirst("email")?.Value ?? "user@localhost";
+        }
+    }
 }

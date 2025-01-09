@@ -44,6 +44,26 @@ public class UserService : IUserService
         if (!identityResult.Succeeded)
             return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
         return await ResponseWrapper<string>.SuccessAsync("[ML53] User password changed.");
+    }  
+    public async Task<IResponseWrapper> ChangeUserEmailAsync(ChangeEmailRequest request)
+    {
+        var currentLoggedInUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
+        if (currentLoggedInUser is null)
+            return await ResponseWrapper.FailAsync("[ML99] User does not exist.");
+
+        var userInDb = await _userManager.FindByEmailAsync(request.Email);
+        if (userInDb is not null) 
+            return await ResponseWrapper.FailAsync("[ML100] Email is already taken.");
+
+        currentLoggedInUser.Email = request.Email;
+        currentLoggedInUser.EmailConfirmed = false;
+
+        var identityResult = await _userManager.UpdateAsync(currentLoggedInUser);
+        if (identityResult.Succeeded)
+            return await ResponseWrapper<string>
+                .SuccessAsync("[ML101] User email successfully updated.");
+        return await ResponseWrapper
+            .FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
 
     public async Task<IResponseWrapper> ChangeUserStatusAsync(ChangeUserStatusRequest request)
@@ -201,6 +221,45 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<IResponseWrapper> RegisterUserByAdminAsync(UserRegistrationRequest request)
+    {
+        var userWithEmailInDb = await _userManager.FindByEmailAsync(request.Email);
+        if (userWithEmailInDb is not null) await ResponseWrapper.FailAsync("[ML63] Email already taken.");
+
+        var userWithUserNameInDb = await _userManager.FindByNameAsync(request.UserName);
+        if (userWithUserNameInDb is not null)
+            await ResponseWrapper.FailAsync("[ML64] Username already taken.");
+
+        var newUser = new ApplicationUser
+        {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            UserName = request.UserName,
+            IsActive = true,
+            EmailConfirmed = true
+        };
+        var password = new PasswordHasher<ApplicationUser>();
+        newUser.PasswordHash = password.HashPassword(newUser, request.Password);
+
+        var identityResult = await _userManager.CreateAsync(newUser);
+
+        if (identityResult.Succeeded)
+        {
+            //Assing user to basic role
+            await _userManager.AddToRoleAsync(newUser, AppRoles.Basic);
+
+            var message = "[ML102] User registered successfully, also email confirmed.";
+
+            return await ResponseWrapper<string>
+                .SuccessAsync(message);
+        }
+        else
+        {
+            return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
+        }
+    }
+
     public async Task<IResponseWrapper> UpdateUserAsync(UpdateUserRequest request)
     {
         var userInDb = await _userManager.FindByIdAsync(request.UserId);
@@ -208,6 +267,16 @@ public class UserService : IUserService
 
         userInDb.FirstName = request.FirstName;
         userInDb.LastName = request.LastName;
+        var userNameCheck = await _userManager.FindByNameAsync(request.UserName);
+        if (userNameCheck is null)
+        {
+            userInDb.UserName = request.UserName;
+        }
+        else
+        {
+                return await ResponseWrapper.FailAsync("[ML98] Username is already taken.");
+        }
+       
 
         var identityResult = await _userManager.UpdateAsync(userInDb);
         if (identityResult.Succeeded)
