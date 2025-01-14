@@ -16,5 +16,10 @@ internal class LinkEntityConfig : IEntityTypeConfiguration<Link>
         builder
             .HasIndex(e => e.Description)
             .HasDatabaseName("IX_Links_Description");
+
+        // UserName için indeks ekleniyor
+        builder
+            .HasIndex(e => e.UserName)
+            .HasDatabaseName("IX_Links_UserName");
     }
 }

@@ -99,3 +99,5 @@
 [ML99] User does not exist.
 [ML100] Email is already taken.
 [ML101] User email successfully updated.
+[ML102] User does not exist.
+[ML103] User email state successfully updated.

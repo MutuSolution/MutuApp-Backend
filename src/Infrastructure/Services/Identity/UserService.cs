@@ -7,6 +7,7 @@ using Common.Responses.Identity;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
 using Domain;
+using Infrastructure.Context;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace Infrastructure.Services.Identity;
 
 public class UserService : IUserService
 {
+    private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ICurrentUserService _currentUserService;
@@ -23,12 +25,14 @@ public class UserService : IUserService
     public UserService(UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         IMapper mapper,
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        ApplicationDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
         _currentUserService = currentUserService;
+        _context = context;
     }
 
     public async Task<IResponseWrapper> ChangeUserPasswordAsync(ChangePasswordRequest request)
@@ -44,7 +48,7 @@ public class UserService : IUserService
         if (!identityResult.Succeeded)
             return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
         return await ResponseWrapper<string>.SuccessAsync("[ML53] User password changed.");
-    }  
+    }
     public async Task<IResponseWrapper> ChangeUserEmailAsync(ChangeEmailRequest request)
     {
         var currentLoggedInUser = await _userManager.FindByIdAsync(_currentUserService.UserId);
@@ -52,7 +56,7 @@ public class UserService : IUserService
             return await ResponseWrapper.FailAsync("[ML99] User does not exist.");
 
         var userInDb = await _userManager.FindByEmailAsync(request.Email);
-        if (userInDb is not null) 
+        if (userInDb is not null)
             return await ResponseWrapper.FailAsync("[ML100] Email is already taken.");
 
         currentLoggedInUser.Email = request.Email;
@@ -273,13 +277,33 @@ public class UserService : IUserService
 
         if (userNameCheck is not null && currentUserUserName != request.UserName)
             return await ResponseWrapper.FailAsync("[ML98] Username is already taken.");
-        
+
         userInDb.UserName = request.UserName;
 
         var identityResult = await _userManager.UpdateAsync(userInDb);
         if (identityResult.Succeeded)
-            return await ResponseWrapper<string>.SuccessAsync("[ML67] User details successfully updated.");
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var currentUserName = _currentUserService.UserName; // Mevcut kullanıcı adı
+                var newUserName = request.UserName; // Yeni kullanıcı adı
 
+                // Salt SQL sorgusu
+                var sql = "UPDATE LINK.Links SET UserName = {0} WHERE UserName = {1}";
+
+                // SQL'i çalıştır
+                await _context.Database.ExecuteSqlRawAsync(sql, newUserName, currentUserName);
+                await transaction.CommitAsync();
+            return await ResponseWrapper<string>.SuccessAsync("[ML67] User details successfully updated.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return await ResponseWrapper.FailAsync(ex.Message);
+            }
+
+        }
         return await ResponseWrapper.FailAsync(GetIdentityResultErrorDescriptions(identityResult));
     }
 
