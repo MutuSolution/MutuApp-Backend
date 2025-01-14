@@ -89,7 +89,8 @@ public class TokenService : ITokenService
 
         if (user is null)
             return await ResponseWrapper<TokenResponse>.FailAsync("[ML48] User Not Found.");
-        if (user.RefreshToken != refreshTokenRequest.RefreshToken || user.RefreshTokenExpiryDate <= DateTime.Now)
+        if (user.RefreshToken != refreshTokenRequest.RefreshToken || 
+            user.RefreshTokenExpiryDate <= DateTime.Now)
             return await ResponseWrapper<TokenResponse>.FailAsync("[ML49] Invalid Client Token.");
 
         var token = GenerateEncrytedToken(GetSigningCredentials(), await GetClaimsAsync(user));
@@ -156,9 +157,9 @@ public class TokenService : ITokenService
         {
         new ("id", user.Id), // ClaimTypes.NameIdentifier yerine kısa "id"
         new("email", user.Email), // ClaimTypes.Email yerine kısa "email"
-        new("name", user.FirstName), // ClaimTypes.Name yerine kısa "name"
-        new("surname", user.LastName), // ClaimTypes.Surname yerine kısa "surname"
-        new("username", user.UserName), // ClaimTypes.Surname yerine kısa "surname"
+        new("firstName", user.FirstName), // ClaimTypes.Name yerine kısa "name"
+        new("lastName", user.LastName), // ClaimTypes.Surname yerine kısa "surname"
+        new("userName", user.UserName), // ClaimTypes.Surname yerine kısa "surname"
         new("phone", user.PhoneNumber ?? string.Empty) // ClaimTypes.MobilePhone yerine kısa "phone"
         }
         .Union(userClaims)

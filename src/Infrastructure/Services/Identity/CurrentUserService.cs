@@ -25,7 +25,7 @@ public class CurrentUserService : ICurrentUserService
         get
         {
             return _httpContextAccessor.HttpContext?.User?
-                .FindFirst("username")?.Value ?? "user";
+                .FindFirst("userName")?.Value ?? "user";
         }
     }
 

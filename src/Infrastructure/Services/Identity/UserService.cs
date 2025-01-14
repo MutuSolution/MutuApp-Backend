@@ -267,16 +267,14 @@ public class UserService : IUserService
 
         userInDb.FirstName = request.FirstName;
         userInDb.LastName = request.LastName;
+
         var userNameCheck = await _userManager.FindByNameAsync(request.UserName);
-        if (userNameCheck is null)
-        {
-            userInDb.UserName = request.UserName;
-        }
-        else
-        {
-                return await ResponseWrapper.FailAsync("[ML98] Username is already taken.");
-        }
-       
+        var currentUserUserName = _currentUserService.UserName;
+
+        if (userNameCheck is not null && currentUserUserName != request.UserName)
+            return await ResponseWrapper.FailAsync("[ML98] Username is already taken.");
+        
+        userInDb.UserName = request.UserName;
 
         var identityResult = await _userManager.UpdateAsync(userInDb);
         if (identityResult.Succeeded)
