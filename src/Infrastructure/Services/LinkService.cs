@@ -106,18 +106,21 @@ public class LinkService : ILinkService
 
     public async Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters)
     {
-        var query = _context.Set<Link>().AsQueryable()
-            .Where(x =>
-                // Filtering
-                (x.UserName == parameters.UserName) &&
-                (x.LikeCount >= parameters.MinLikeCount) &&
-                (x.IsDeleted == parameters.IsDeleted) &&
-                (string.IsNullOrEmpty(parameters.SearchTerm) ||
-                // Searching with case-insensitive comparison
-                x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
+           var query = _context.Set<Link>().AsQueryable()
+    .Where(x =>
+        // Filtering
+        (string.IsNullOrEmpty(parameters.IsPublic) ||
+        (parameters.IsPublic.ToLower() == "true" && x.IsPublic == true) ||
+        (parameters.IsPublic.ToLower() == "false" && x.IsPublic == false)) &&
+        (x.UserName == parameters.UserName) &&
+        (x.LikeCount >= parameters.MinLikeCount) &&
+        (x.IsDeleted == parameters.IsDeleted) &&
+        (string.IsNullOrEmpty(parameters.SearchTerm) ||
+        // Searching with case-insensitive comparison
+        x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+        x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+        x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
+        x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
 
         query = query.SortLink(parameters.OrderBy);
 
