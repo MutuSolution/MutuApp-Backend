@@ -45,9 +45,20 @@ public class TokenService : ITokenService
             return await ResponseWrapper<TokenResponse>.FailAsync("[ML42] Invalid Credentials.");
         }
 
-        if (!user.LockoutEnabled || !user.IsActive || !user.EmailConfirmed)
+        if (!user.LockoutEnabled)
         {
-            return await ResponseWrapper<TokenResponse>.FailAsync("[ML43] User not active. Please contact the administrator.");
+            return await ResponseWrapper<TokenResponse>
+                .FailAsync("[ML43] User not active. Please try later.");
+        }
+        if ( !user.IsActive)
+        {
+            return await ResponseWrapper<TokenResponse>
+                .FailAsync("[ML104] User not active. Please contact the administrator.");
+        }
+        if (!user.EmailConfirmed)
+        {
+            return await ResponseWrapper<TokenResponse>
+                .FailAsync("[ML105] User email not active. Please confirm.");
         }
 
         if (await _userManager.IsLockedOutAsync(user))

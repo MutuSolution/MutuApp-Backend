@@ -40,7 +40,7 @@
 [ML40] Changing role permission is not allowed.
 [ML41] Role permissions updated successfully.
 [ML42] Invalid Credentials.
-[ML43] User not active. Please contact the administrator.
+[ML43] User not active. Please try later.
 [ML44] User not active. Please try again later.
 [ML45] Link liked.
 [ML46] Invalid Credentials.
@@ -101,3 +101,5 @@
 [ML101] User email successfully updated.
 [ML102] User does not exist.
 [ML103] User email state successfully updated.
+[ML104] User not active. Please contact the administrator.
+[ML105] User email not active. Please confirm.
