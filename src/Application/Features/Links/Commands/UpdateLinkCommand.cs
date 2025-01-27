@@ -31,17 +31,20 @@ public class UpdateLinkCommandHandler : IRequestHandler<UpdateLinkCommand, IResp
             .GetLinkByIdAsync(request.UpdateLinkRequest.Id);
         if (linkInDb is not null)
         {
-            linkInDb.Title = request.UpdateLinkRequest.Title;
-            linkInDb.Url = request.UpdateLinkRequest.Url;
-            linkInDb.UserName = request.UpdateLinkRequest.UserName;
-            linkInDb.Description = request.UpdateLinkRequest.Description;
-            linkInDb.IsPublic = request.UpdateLinkRequest.IsPublic;
-            linkInDb.IsDeleted = request.UpdateLinkRequest.IsDeleted;
-            linkInDb.LikeCount = request.UpdateLinkRequest.LikeCount;
+            var updatedLink = new LinkResponse
+            {
+                Id = linkInDb.Id,
+                Title = request.UpdateLinkRequest.Title,
+                Url = request.UpdateLinkRequest.Url,
+                UserName = request.UpdateLinkRequest.UserName,
+                Description = request.UpdateLinkRequest.Description,
+                IsPublic = request.UpdateLinkRequest.IsPublic,
+                IsDeleted = request.UpdateLinkRequest.IsDeleted,
+                LikeCount = request.UpdateLinkRequest.LikeCount
+            };
 
-
-            var updatedLink = await _linkService.UpdateLinkAsync(linkInDb);
-            var mappedLink = _mapper.Map<LinkResponse>(updatedLink);
+            var result = await _linkService.UpdateLinkAsync(updatedLink);
+            var mappedLink = _mapper.Map<LinkResponse>(result);
 
             return await ResponseWrapper<LinkResponse>
                 .SuccessAsync(mappedLink, "[ML22] Link updated successfully");

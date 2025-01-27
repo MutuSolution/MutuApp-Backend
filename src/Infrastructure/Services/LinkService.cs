@@ -29,24 +29,52 @@ public class LinkService : ILinkService
         return link;
     }
 
-    public async Task<int> DeleteLinkAsync(Link link)
+    public async Task<int> DeleteLinkAsync(LinkResponse linkResponse)
     {
+        var link = await _context.Links.FindAsync(linkResponse.Id);
+        if (link == null)
+        {
+            throw new ArgumentException("Link not found");
+        }
         _context.Links.Remove(link);
         await _context.SaveChangesAsync();
         return link.Id;
     }
 
-    public async Task<Link> GetLinkByIdAsync(int id)
+    public async Task<LinkResponse> GetLinkByIdAsync(int id)
     {
         var linkInDb = await _context.Links
-            .Where(link => link.Id == id)
+            .Where(link => link.Id == id).Select(link => new LinkResponse
+            {
+                Id = link.Id,
+                Title = link.Title,
+                Url = link.Url,
+                UserName = link.UserName,
+                Description = link.Description,
+                IsPublic = link.IsPublic,
+                IsDeleted = link.IsDeleted,
+                LikeCount = link.LikeCount
+            })
             .FirstOrDefaultAsync();
         return linkInDb;
     }
 
-    public async Task<List<Link>> GetLinkListAsync()
+    public async Task<List<LinkResponse>> GetLinkListAsync()
     {
-        return await _context.Links.ToListAsync();
+        var likedLinkIds = _context.Likes
+       .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+        return await _context.Links.Select(link => new LinkResponse
+        {
+            Id = link.Id,
+            Title = link.Title,
+            Url = link.Url,
+            UserName = link.UserName,
+            Description = link.Description,
+            IsPublic = link.IsPublic,
+            IsDeleted = link.IsDeleted,
+            LikeCount = link.LikeCount,
+            IsLiked = likedLinkIds.Contains(link.Id)
+        }).ToListAsync();
     }
     public async Task<List<Link>> GetHomeLinkListAsync()
     {
@@ -69,15 +97,32 @@ public class LinkService : ILinkService
             .Take(25)
             .ToListAsync();
     }
-    public async Task<Link> UpdateLinkAsync(Link link)
+    public async Task<Link> UpdateLinkAsync(LinkResponse linkResponse)
     {
+        var link = await _context.Links.FindAsync(linkResponse.Id);
+        if (link == null)
+        {
+            throw new ArgumentException("Link not found");
+        }
+
+        link.Title = linkResponse.Title;
+        link.Url = linkResponse.Url;
+        link.UserName = linkResponse.UserName;
+        link.Description = linkResponse.Description;
+        link.IsPublic = linkResponse.IsPublic;
+        link.IsDeleted = linkResponse.IsDeleted;
+        link.LikeCount = linkResponse.LikeCount;
+
         _context.Links.Update(link);
         await _context.SaveChangesAsync();
         return link;
     }
 
-    public async Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters)
+    public async Task<PaginationResult<LinkResponse>> GetPagedLinksAsync(LinkParameters parameters)
     {
+        var likedLinkIds = _context.Likes
+    .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+
         var query = _context.Set<Link>().AsQueryable()
             .Where(x =>
                 // Filtering
@@ -99,14 +144,29 @@ public class LinkService : ILinkService
         var items = await query
                 .Skip(parameters.Skip)
                 .Take(parameters.ItemsPerPage)
+                 .Select(link => new LinkResponse
+                 {
+                     Id = link.Id,
+                     Title = link.Title,
+                     Url = link.Url,
+                     UserName = link.UserName,
+                     Description = link.Description,
+                     IsPublic = link.IsPublic,
+                     IsDeleted = link.IsDeleted,
+                     LikeCount = link.LikeCount,
+                     IsLiked = likedLinkIds.Contains(link.Id)
+                 })
                 .ToListAsync();
 
-        return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+        return new PaginationResult<LinkResponse>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
-    public async Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters)
+    public async Task<PaginationResult<LinkResponse>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters)
     {
-           var query = _context.Set<Link>().AsQueryable()
+        var likedLinkIds = _context.Likes
+     .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+
+        var query = _context.Set<Link>().AsQueryable()
     .Where(x =>
         // Filtering
         (string.IsNullOrEmpty(parameters.IsPublic) ||
@@ -132,15 +192,30 @@ public class LinkService : ILinkService
         var items = await query
                 .Skip(parameters.Skip)
                 .Take(parameters.ItemsPerPage)
+                 .Select(link => new LinkResponse
+                 {
+                     Id = link.Id,
+                     Title = link.Title,
+                     Url = link.Url,
+                     UserName = link.UserName,
+                     Description = link.Description,
+                     IsPublic = link.IsPublic,
+                     IsDeleted = link.IsDeleted,
+                     LikeCount = link.LikeCount,
+                     IsLiked = likedLinkIds.Contains(link.Id)
+                 })
                 .ToListAsync();
 
-        return new PaginationResult<Link>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
+        return new PaginationResult<LinkResponse>(items, totalCount, totalPage, parameters.Page, parameters.ItemsPerPage);
     }
 
 
 
     public async Task<PaginationResult<LinkResponse>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters)
     {
+        var likedLinkIds = _context.Likes
+       .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+
         var query = _context.Set<Like>().Include(l => l.Link).AsQueryable()
             .Where(x =>
                 // Filtering
@@ -162,14 +237,15 @@ public class LinkService : ILinkService
                 .Take(parameters.ItemsPerPage)
                  .Select(link => new LinkResponse
                  {
-                     Id = link.Link.Id,
+                     Id = link.Id,
                      Title = link.Link.Title,
                      Url = link.Link.Url,
                      UserName = link.Link.UserName,
                      Description = link.Link.Description,
                      IsPublic = link.Link.IsPublic,
                      IsDeleted = link.Link.IsDeleted,
-                     LikeCount = link.Link.LikeCount
+                     LikeCount = link.Link.LikeCount,
+                     IsLiked = likedLinkIds.Contains(link.Link.Id)
                  })
                 .ToListAsync();
 
@@ -216,20 +292,7 @@ public class LinkService : ILinkService
         return ResponseWrapper.Success("[ML79] Link successfully liked.");
 
     }
-
-
-    public async Task<IResponseWrapper> IsLike(int id, CancellationToken cancellationToken)
-    {
-        var isLiked = await _context.Likes
-            .FirstOrDefaultAsync(x => x.LinkId == id && x.UserName == _currentUserService.UserName);
-        var link = await _context.Links.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (link == null)
-            return await ResponseWrapper.FailAsync("[ML81] Link does not found.");
-
-        if (isLiked is null)
-            return ResponseWrapper.Success("[ML80] Link unliked.");
-
-        return ResponseWrapper.Success("[ML45] Link liked.");
-    }
+ 
 }
+
+ 

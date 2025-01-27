@@ -21,15 +21,7 @@ public class LikesController : MyBaseController<LikesController>
         return NotFound(response);
     }
 
-
-    [HttpGet("isLike/{linkId:int}")]
-    [MustHavePermission(AppFeature.Links, AppAction.Read)]
-    public async Task<IActionResult> IsLikeAsync(int linkId)
-    {
-        var response = await MediatorSender.Send(new IsLikedQuery { LinkId = linkId });
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
-    }
+ 
 
     [HttpGet("one-user")]
     [MustHavePermission(AppFeature.Links, AppAction.Read)]

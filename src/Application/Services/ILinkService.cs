@@ -10,16 +10,15 @@ namespace Application.Services;
 public interface ILinkService
 {
     Task<Link> CreateLinkAsync(Link link);
-    Task<List<Link>> GetLinkListAsync();
+    Task<List<LinkResponse>> GetLinkListAsync();
     Task<List<Link>> GetHomeLinkListAsync();
     Task<List<Link>> GetPublicLinkWithUsernameAsync(string userName);
-    Task<Link> GetLinkByIdAsync(int id);
-    Task<Link> UpdateLinkAsync(Link link);
-    Task<int> DeleteLinkAsync(Link link);
+    Task<LinkResponse> GetLinkByIdAsync(int id);
+    Task<Link> UpdateLinkAsync(LinkResponse link);
+    Task<int> DeleteLinkAsync(LinkResponse link);
     Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request);
     Task<IResponseWrapper> LikeLinkAsync(LikeLinkRequest request, CancellationToken cancellationToken);
-    Task<IResponseWrapper> IsLike(int id, CancellationToken cancellationToken);
-    Task<PaginationResult<Link>> GetPagedLinksAsync(LinkParameters parameters);
-    Task<PaginationResult<Link>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
+    Task<PaginationResult<LinkResponse>> GetPagedLinksAsync(LinkParameters parameters);
+    Task<PaginationResult<LinkResponse>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
     Task<PaginationResult<LinkResponse>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters);
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Common.Requests.Links;
+using Common.Responses.Links;
 using Domain;
 using FluentValidation;
 
@@ -12,7 +13,7 @@ public class UpdateLinkRequestValidator : AbstractValidator<UpdateLinkRequest>
 
         RuleFor(x => x.Id)
             .MustAsync(async (id, cancellation) => await linkService
-            .GetLinkByIdAsync(id) is Link existing)
+            .GetLinkByIdAsync(id) is LinkResponse existing)
             .WithMessage("[ML27] Link does not exit.");
 
         RuleFor(x => x.Title)

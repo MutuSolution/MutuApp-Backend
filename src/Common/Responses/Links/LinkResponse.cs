@@ -9,5 +9,6 @@ public record LinkResponse
     public string Description { get; init; }
     public bool IsPublic { get; init; }
     public bool IsDeleted { get; init; }
+    public bool IsLiked { get; init; } = false;
     public int LikeCount { get; init; }
 }
