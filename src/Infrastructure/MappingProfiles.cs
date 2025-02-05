@@ -13,6 +13,7 @@ internal class MappingProfiles : Profile
         CreateMap<ApplicationUser, UserResponse>();
         CreateMap<ApplicationRole, RoleResponse>();
         CreateMap<Link, LikeResponse>();
+        CreateMap<LinkReport, LinkReportResponse>().ReverseMap();
         CreateMap<ApplicationRoleClaim, RoleClaimViewModel>().ReverseMap();
     }
 }

@@ -10,8 +10,11 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
         CreateMap<CreateLinkRequest, Link>();
-        CreateMap<Link, LinkResponse>();
+        CreateMap<LinkReportRequest, LinkReport>();
+        CreateMap<Link, LinkResponse>().ReverseMap();
         CreateMap<Like, LikeResponse>().ReverseMap();
-        CreateMap<Like, LinkResponse>();
+        CreateMap<Like, LinkResponse>().ReverseMap();
+        CreateMap<LinkReport, LinkReportResponse>().ReverseMap();
+
     }
 }

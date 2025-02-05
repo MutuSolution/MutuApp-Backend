@@ -48,5 +48,6 @@ public class ApplicationDbContext : IdentityDbContext<
 
     public DbSet<Link> Links => Set<Link>();
     public DbSet<Like> Likes { get; set; }
+    public DbSet<LinkReport> LinkReports { get; set; }
 
 }

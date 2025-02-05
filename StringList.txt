@@ -103,3 +103,13 @@
 [ML103] User email state successfully updated.
 [ML104] User not active. Please contact the administrator.
 [ML105] User email not active. Please confirm.
+[ML106] does not exist.
+[ML107] Not permitted.
+[ML108] Email already taken.
+[ML109] Username is already taken.
+[ML110] User details successfully updated.
+[ML111] Link report created successfully.
+[ML112] Failed to create link report entry.
+[ML113] No links were found.
+[ML114] Link report updated successfully.
+[ML115] Failed to update link report entry.

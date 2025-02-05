@@ -22,6 +22,12 @@ public class LinkService : ILinkService
         _currentUserService = currentUserService;
     }
 
+    public async Task<LinkReport> ReportLinkAsync(LinkReport linkReport)
+    {
+        await _context.LinkReports.AddAsync(linkReport);
+        await _context.SaveChangesAsync();
+        return linkReport;
+    }
     public async Task<Link> CreateLinkAsync(Link link)
     {
         await _context.Links.AddAsync(link);
@@ -292,7 +298,39 @@ public class LinkService : ILinkService
         return ResponseWrapper.Success("[ML79] Link successfully liked.");
 
     }
- 
+
+    public async Task<List<LinkReportResponse>> GetLinkReportsAsync()
+    {
+        var linkReports = await _context.LinkReports
+            .OrderByDescending(report => report.Id)
+            .ToListAsync();
+
+        return linkReports.Select(report => new LinkReportResponse
+        {
+            Id = report.Id,
+            LinkId = report.LinkId,
+            Message = report.Message,
+            IsChecked = report.IsChecked
+        }).ToList();
+    }
+
+    public Task<LinkReportResponse> UpdateReportLinkAsync(int reportId)
+    {
+        var linkReport = _context.LinkReports.FirstOrDefault(x => x.Id == reportId);
+        if (linkReport == null)
+        {
+            return Task.FromResult(new LinkReportResponse());
+        }
+        linkReport.IsChecked = true;
+        _context.LinkReports.Update(linkReport);
+        _context.SaveChanges();
+        return Task.FromResult(new LinkReportResponse
+        {
+            LinkId = linkReport.LinkId,
+            Message = linkReport.Message,
+            IsChecked = linkReport.IsChecked
+        });
+    }
 }
 
  

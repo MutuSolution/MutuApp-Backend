@@ -6,4 +6,12 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Requests\Report\" />
+  </ItemGroup>
+
 </Project>

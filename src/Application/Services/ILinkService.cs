@@ -9,6 +9,7 @@ namespace Application.Services;
 
 public interface ILinkService
 {
+
     Task<Link> CreateLinkAsync(Link link);
     Task<List<LinkResponse>> GetLinkListAsync();
     Task<List<Link>> GetHomeLinkListAsync();
@@ -21,4 +22,11 @@ public interface ILinkService
     Task<PaginationResult<LinkResponse>> GetPagedLinksAsync(LinkParameters parameters);
     Task<PaginationResult<LinkResponse>> GetPagedLinksByUserNameAsync(LinksByUserNameParameters parameters);
     Task<PaginationResult<LinkResponse>> GetPagedLikesByUserNameAsync(LikesByUserNameParameters parameters);
+
+    //report
+    Task<LinkReport> ReportLinkAsync(LinkReport linkReport);
+    Task<List<LinkReportResponse>> GetLinkReportsAsync();
+    Task<LinkReportResponse> UpdateReportLinkAsync(int reportId);
+
+
 }
