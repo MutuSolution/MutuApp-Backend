@@ -16,7 +16,7 @@ public class AdminUpdateUserRequest
     public string? Email { get; set; } // Boş olabilir
     public bool? EmailConfirmed { get; set; } // Boş olabilir
     public bool IsUserNameChange { get; set; } = true;
-    public string? NewUserName { get; set; } // Boş olabilir
+    public string? UserName { get; set; } // Boş olabilir
     public bool IsPasswordChange { get; set; }
     public string? Password { get; set; } // Boş olabilir
 }

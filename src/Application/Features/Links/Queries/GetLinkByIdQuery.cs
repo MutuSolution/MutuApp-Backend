@@ -28,7 +28,7 @@ public class GetLinkByIdQueryHandler :
     {
         var linkInDb = await _linkService.GetLinkByIdAsync(request.LinkId);
         if (linkInDb is null)
-            return await ResponseWrapper.FailAsync("[ML24] Link does not exist.");
+            return await ResponseWrapper.SuccessAsync("[ML24] Link does not exist.");
 
         var mappedLink = _mapper.Map<LinkResponse>(linkInDb);
         return await ResponseWrapper<LinkResponse>.SuccessAsync(mappedLink);

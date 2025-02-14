@@ -113,3 +113,6 @@
 [ML113] No links were found.
 [ML114] Link report updated successfully.
 [ML115] Failed to update link report entry.
+[ML116] Link is not allowed.
+[ML117] Link not found.
+[ML118] Link not found.

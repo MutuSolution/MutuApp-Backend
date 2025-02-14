@@ -30,6 +30,15 @@ public class LinkService : ILinkService
     }
     public async Task<Link> CreateLinkAsync(Link link)
     {
+        var linkInDb = await _context.Links.FirstOrDefaultAsync(x => x.Url == link.Url);
+        if (linkInDb != null)
+        {
+            var isReportedLink = await _context.LinkReports.FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id);
+            if (isReportedLink != null)
+            {
+                throw new InvalidOperationException("[ML116] Link is not allowed.");
+            }
+        }
         await _context.Links.AddAsync(link);
         await _context.SaveChangesAsync();
         return link;
@@ -40,7 +49,7 @@ public class LinkService : ILinkService
         var link = await _context.Links.FindAsync(linkResponse.Id);
         if (link == null)
         {
-            throw new ArgumentException("Link not found");
+            throw new ArgumentException("[ML117] Link not found.");
         }
         _context.Links.Remove(link);
         await _context.SaveChangesAsync();
@@ -108,7 +117,7 @@ public class LinkService : ILinkService
         var link = await _context.Links.FindAsync(linkResponse.Id);
         if (link == null)
         {
-            throw new ArgumentException("Link not found");
+            throw new ArgumentException("[ML118] Link not found.");
         }
 
         link.Title = linkResponse.Title;
@@ -128,19 +137,19 @@ public class LinkService : ILinkService
     {
         var likedLinkIds = _context.Likes
     .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
-
+        var searhTerm = CleanSearchTerm(parameters.SearchTerm);
         var query = _context.Set<Link>().AsQueryable()
             .Where(x =>
                 // Filtering
                 (x.IsPublic == parameters.IsPublic) &&
                 (x.LikeCount >= parameters.MinLikeCount) &&
                 (x.IsDeleted == parameters.IsDeleted) &&
-                (string.IsNullOrEmpty(parameters.SearchTerm) ||
+                (string.IsNullOrEmpty(searhTerm) ||
                 // Searching with case-insensitive comparison
-                x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-                x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())))
+                x.Title.ToLower().Contains(searhTerm.ToLower()) ||
+                x.Url.ToLower().Contains(searhTerm.ToLower()) ||
+                x.UserName.ToLower().Contains(searhTerm.ToLower()) ||
+                x.Description.ToLower().Contains(searhTerm.ToLower())))
             .SortLink(parameters.OrderBy);
 
         var totalCount = await query.CountAsync();
@@ -171,6 +180,7 @@ public class LinkService : ILinkService
     {
         var likedLinkIds = _context.Likes
      .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+        var searhTerm = CleanSearchTerm(parameters.SearchTerm);
 
         var query = _context.Set<Link>().AsQueryable()
     .Where(x =>
@@ -181,12 +191,12 @@ public class LinkService : ILinkService
         (x.UserName == parameters.UserName) &&
         (x.LikeCount >= parameters.MinLikeCount) &&
         (x.IsDeleted == parameters.IsDeleted) &&
-        (string.IsNullOrEmpty(parameters.SearchTerm) ||
+        (string.IsNullOrEmpty(searhTerm) ||
         // Searching with case-insensitive comparison
-        x.Title.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-        x.Url.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-        x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower()) ||
-        x.Description.ToLower().Contains(parameters.SearchTerm.ToLower())));
+        x.Title.ToLower().Contains(searhTerm.ToLower()) ||
+        x.Url.ToLower().Contains(searhTerm.ToLower()) ||
+        x.UserName.ToLower().Contains(searhTerm.ToLower()) ||
+        x.Description.ToLower().Contains(searhTerm.ToLower())));
 
         query = query.SortLink(parameters.OrderBy);
 
@@ -221,14 +231,15 @@ public class LinkService : ILinkService
     {
         var likedLinkIds = _context.Likes
        .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+        var searhTerm = CleanSearchTerm(parameters.SearchTerm);
 
         var query = _context.Set<Like>().Include(l => l.Link).AsQueryable()
             .Where(x =>
                 // Filtering
                 (x.UserName == parameters.UserName) &&
-                (string.IsNullOrEmpty(parameters.SearchTerm) ||
+                (string.IsNullOrEmpty(searhTerm) ||
                 // Searching with case-insensitive comparison
-                x.UserName.ToLower().Contains(parameters.SearchTerm.ToLower())
+                x.UserName.ToLower().Contains(searhTerm.ToLower())
               ));
 
         query = query.SortLike(parameters.OrderBy);
@@ -330,6 +341,16 @@ public class LinkService : ILinkService
             Message = linkReport.Message,
             IsChecked = linkReport.IsChecked
         });
+    }
+
+    public string CleanSearchTerm(string searchTerm)
+    {
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            return searchTerm;
+        }
+
+        return searchTerm.Replace("#", "");
     }
 }
 

@@ -82,10 +82,10 @@ public class AdminController : MyBaseController<AdminController>
         }
         if (userRequest.IsUserNameChange)
         {
-            var userNameCheck = await _userManager.FindByNameAsync(userRequest.NewUserName);
+            var userNameCheck = await _userManager.FindByNameAsync(userRequest.UserName);
             if (userNameCheck is not null)
                 return await ResponseWrapper.FailAsync("[ML109] Username is already taken.");
-            userInDb.UserName = userRequest.NewUserName;
+            userInDb.UserName = userRequest.UserName;
         }
 
         if (userRequest.IsPasswordChange)
@@ -106,7 +106,7 @@ public class AdminController : MyBaseController<AdminController>
                 if (userRequest.IsUserNameChange)
                 {
                     var currentUserName = userInDb.UserName; // Mevcut kullanıcı adı
-                    var newUserName = userRequest.NewUserName; // Yeni kullanıcı adı
+                    var newUserName = userRequest.UserName; // Yeni kullanıcı adı
 
                     // Salt SQL sorgusu
                     var sql = "UPDATE LINK.Links SET UserName = {0} WHERE UserName = {1}";
