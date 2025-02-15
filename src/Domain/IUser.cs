@@ -7,6 +7,7 @@ public interface IUser
     string LastName { get; }
     string Email { get; }
     string UserName { get; }
+    string Role { get; }
     bool IsActive { get; }
     bool EmailConfirmed { get; }
 }

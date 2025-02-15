@@ -202,6 +202,7 @@ public class UserService : IUserService
             Email = request.Email,
             UserName = request.UserName,
             IsActive = true,
+            Role = "Basic",
             EmailConfirmed = false
         };
         var password = new PasswordHasher<ApplicationUser>();
