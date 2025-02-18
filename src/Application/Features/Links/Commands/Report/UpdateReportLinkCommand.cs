@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using AutoMapper;
+using Common.Requests.Links.Report;
 using Common.Responses.Links;
 using Common.Responses.Wrappers;
 using MediatR;
@@ -13,6 +14,7 @@ namespace Application.Features.Links.Commands.Report;
 public class UpdateReportLinkCommand : IRequest<IResponseWrapper>
 {
     public int ReportId { get; set; }
+    public bool IsChecked { get; set; }
 }
 public class UpdateReportLinkCommandHandler : IRequestHandler<UpdateReportLinkCommand, IResponseWrapper>
 {
@@ -25,7 +27,12 @@ public class UpdateReportLinkCommandHandler : IRequestHandler<UpdateReportLinkCo
     }
     public async Task<IResponseWrapper> Handle(UpdateReportLinkCommand request, CancellationToken cancellationToken)
     {
-        var updatedLink = await _linkService.UpdateReportLinkAsync(request.ReportId);
+        var updateRequest = new LinkReportIsCheckedRequest
+        {
+            ReportId = request.ReportId,
+            IsChecked = request.IsChecked
+        };
+        var updatedLink = await _linkService.UpdateReportLinkAsync(updateRequest);
         if (updatedLink.LinkId > 0)
         {
             var mappedUpdatedLink = _mapper.Map<LinkReportResponse>(updatedLink);

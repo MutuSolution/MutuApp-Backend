@@ -2,6 +2,7 @@
 using Application.Services;
 using Application.Services.Identity;
 using Common.Requests.Links;
+using Common.Requests.Links.Report;
 using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
@@ -33,7 +34,8 @@ public class LinkService : ILinkService
         var linkInDb = await _context.Links.FirstOrDefaultAsync(x => x.Url == link.Url);
         if (linkInDb != null)
         {
-            var isReportedLink = await _context.LinkReports.FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id);
+            var isReportedLink = await _context.LinkReports
+                .FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id && x.IsChecked);
             if (isReportedLink != null)
             {
                 throw new InvalidOperationException("[ML116] Link is not allowed.");
@@ -77,7 +79,10 @@ public class LinkService : ILinkService
     public async Task<List<LinkResponse>> GetLinkListAsync()
     {
         var likedLinkIds = _context.Likes
-       .Where(x => x.UserName == _currentUserService.UserName).Select(x => x.LinkId).ToHashSet();
+       .Where(x => x.UserName == _currentUserService.UserName)
+       .Select(x => x.LinkId)
+       .ToHashSet();
+
         return await _context.Links.Select(link => new LinkResponse
         {
             Id = link.Id,
@@ -313,6 +318,7 @@ public class LinkService : ILinkService
     public async Task<List<LinkReportResponse>> GetLinkReportsAsync()
     {
         var linkReports = await _context.LinkReports
+            .Where(x=> x.IsChecked == false)
             .OrderByDescending(report => report.Id)
             .ToListAsync();
 
@@ -325,14 +331,14 @@ public class LinkService : ILinkService
         }).ToList();
     }
 
-    public Task<LinkReportResponse> UpdateReportLinkAsync(int reportId)
+    public Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request)
     {
-        var linkReport = _context.LinkReports.FirstOrDefault(x => x.Id == reportId);
+        var linkReport = _context.LinkReports.FirstOrDefault(x => x.Id == request.ReportId);
         if (linkReport == null)
         {
             return Task.FromResult(new LinkReportResponse());
         }
-        linkReport.IsChecked = true;
+        linkReport.IsChecked = request.IsChecked;
         _context.LinkReports.Update(linkReport);
         _context.SaveChanges();
         return Task.FromResult(new LinkReportResponse

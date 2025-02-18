@@ -1,5 +1,6 @@
 ﻿using Application.Features.Links.Queries.Home;
 using Common.Requests.Links;
+using Common.Requests.Links.Report;
 using Common.Responses.Links;
 using Common.Responses.Pagination;
 using Common.Responses.Wrappers;
@@ -26,7 +27,7 @@ public interface ILinkService
     //report
     Task<LinkReport> ReportLinkAsync(LinkReport linkReport);
     Task<List<LinkReportResponse>> GetLinkReportsAsync();
-    Task<LinkReportResponse> UpdateReportLinkAsync(int reportId);
+    Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request);
 
 
 }
