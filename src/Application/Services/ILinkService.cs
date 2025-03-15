@@ -27,7 +27,7 @@ public interface ILinkService
     //report
     Task<LinkReport> ReportLinkAsync(LinkReport linkReport);
     Task<List<LinkReportResponse>> GetLinkReportsAsync();
-    Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request);
+    Task<LinkReportResponse> UpdateReportLinkAsync(LinkReporIsPermittedRequest request);
 
 
 }

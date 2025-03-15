@@ -11,5 +11,5 @@ public class LinkReportResponse
     public int Id { get; init; }
     public int LinkId { get; init; }
     public string? Message { get; init; }
-    public bool? IsChecked { get; init; }
+    public bool? IsPermitted { get; init; }
 }

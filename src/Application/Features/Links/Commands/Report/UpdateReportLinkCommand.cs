@@ -14,7 +14,7 @@ namespace Application.Features.Links.Commands.Report;
 public class UpdateReportLinkCommand : IRequest<IResponseWrapper>
 {
     public int ReportId { get; set; }
-    public bool IsChecked { get; set; }
+    public bool IsPermitted { get; set; }
 }
 public class UpdateReportLinkCommandHandler : IRequestHandler<UpdateReportLinkCommand, IResponseWrapper>
 {
@@ -27,10 +27,10 @@ public class UpdateReportLinkCommandHandler : IRequestHandler<UpdateReportLinkCo
     }
     public async Task<IResponseWrapper> Handle(UpdateReportLinkCommand request, CancellationToken cancellationToken)
     {
-        var updateRequest = new LinkReportIsCheckedRequest
+        var updateRequest = new LinkReporIsPermittedRequest
         {
             ReportId = request.ReportId,
-            IsChecked = request.IsChecked
+            IsPermitted = request.IsPermitted
         };
 
         var updatedLink = await _linkService.UpdateReportLinkAsync(updateRequest);

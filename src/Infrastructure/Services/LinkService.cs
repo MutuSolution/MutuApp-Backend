@@ -35,7 +35,7 @@ public class LinkService : ILinkService
         if (linkInDb != null)
         {
             var isReportedLink = await _context.LinkReports
-                .FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id && x.IsChecked == true);
+                .FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id && x.IsPermitted == true);
             if (isReportedLink != null)
             {
                 throw new InvalidOperationException("[ML116] Link is not allowed.");
@@ -318,7 +318,7 @@ public class LinkService : ILinkService
     public async Task<List<LinkReportResponse>> GetLinkReportsAsync()
     {
         var linkReports = await _context.LinkReports
-            .Where(x=> x.IsChecked == null)
+            .Where(x=> x.IsPermitted == null)
             .OrderByDescending(report => report.Id)
             .ToListAsync();
 
@@ -327,11 +327,11 @@ public class LinkService : ILinkService
             Id = report.Id,
             LinkId = report.LinkId,
             Message = report.Message,
-            IsChecked = report.IsChecked
+            IsPermitted = report.IsPermitted
         }).ToList();
     }
 
-    public async Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request)
+    public async Task<LinkReportResponse> UpdateReportLinkAsync(LinkReporIsPermittedRequest request)
     {
         try
         {
@@ -343,8 +343,17 @@ public class LinkService : ILinkService
                 return new LinkReportResponse();
             }
 
-            linkReport.IsChecked = request.IsChecked;
+            linkReport.IsPermitted = request.IsPermitted;
             _context.LinkReports.Update(linkReport);
+            if (!request.IsPermitted)
+            {
+                var link = await _context.Links.FindAsync(linkReport.LinkId);
+                if (link == null)
+                {
+                    throw new ArgumentException("[ML117] Link not found.");
+                }
+                link.IsDeleted = true;
+            }
             int affectedRows = await _context.SaveChangesAsync(); // ASENKRON OLSUN!
 
             if (affectedRows == 0)
@@ -356,7 +365,7 @@ public class LinkService : ILinkService
             {
                 LinkId = linkReport.LinkId,
                 Message = linkReport.Message,
-                IsChecked = linkReport.IsChecked
+                IsPermitted = linkReport.IsPermitted
             };
         }
         catch (Exception ex)

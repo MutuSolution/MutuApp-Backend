@@ -36,10 +36,10 @@ public class ReportController : MyBaseController<ReportController>
 
     [HttpPut("link")]
     [MustHavePermission(AppFeature.Links, AppAction.Update)]
-    public async Task<IActionResult> UpdateLinkReport([FromBody] LinkReportIsCheckedRequest request)
+    public async Task<IActionResult> UpdateLinkReport([FromBody] LinkReporIsPermittedRequest request)
     {
         var response = await MediatorSender
-            .Send(new UpdateReportLinkCommand { ReportId = request.ReportId, IsChecked = request.IsChecked });
+            .Send(new UpdateReportLinkCommand { ReportId = request.ReportId, IsPermitted = request.IsPermitted });
         if (response.IsSuccessful) return Ok(response);
         return BadRequest(response);
     }
