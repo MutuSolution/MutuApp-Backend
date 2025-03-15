@@ -32,14 +32,17 @@ public class UpdateReportLinkCommandHandler : IRequestHandler<UpdateReportLinkCo
             ReportId = request.ReportId,
             IsChecked = request.IsChecked
         };
+
         var updatedLink = await _linkService.UpdateReportLinkAsync(updateRequest);
+
         if (updatedLink.LinkId > 0)
         {
             var mappedUpdatedLink = _mapper.Map<LinkReportResponse>(updatedLink);
-            return await ResponseWrapper<LinkReportResponse>
-                .SuccessAsync(mappedUpdatedLink, "[ML114] Link report updated successfully.");
+            return ResponseWrapper<LinkReportResponse>
+                .Success(mappedUpdatedLink, "[ML114] Link report updated successfully.");
         }
-        return await ResponseWrapper
-            .FailAsync("[ML115] Failed to update link report entry.");
+
+        return ResponseWrapper.Fail("[ML115a] Failed to update link report entry.");
     }
+
 }

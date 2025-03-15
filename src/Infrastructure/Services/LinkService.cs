@@ -35,7 +35,7 @@ public class LinkService : ILinkService
         if (linkInDb != null)
         {
             var isReportedLink = await _context.LinkReports
-                .FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id && x.IsChecked);
+                .FirstOrDefaultAsync(x => x.LinkId == linkInDb.Id && x.IsChecked == true);
             if (isReportedLink != null)
             {
                 throw new InvalidOperationException("[ML116] Link is not allowed.");
@@ -101,7 +101,7 @@ public class LinkService : ILinkService
         return await _context.Links
             .Where(x => (x.IsPublic == true) && (x.IsDeleted == false))
             .OrderByDescending(x => x.LikeCount)
-            .Take(25)
+            .Take(9)
             .ToListAsync();
     } 
     public async Task<List<Link>> GetPublicLinkWithUsernameAsync(string userName)
@@ -318,7 +318,7 @@ public class LinkService : ILinkService
     public async Task<List<LinkReportResponse>> GetLinkReportsAsync()
     {
         var linkReports = await _context.LinkReports
-            .Where(x=> x.IsChecked == false)
+            .Where(x=> x.IsChecked == null)
             .OrderByDescending(report => report.Id)
             .ToListAsync();
 
@@ -331,23 +331,42 @@ public class LinkService : ILinkService
         }).ToList();
     }
 
-    public Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request)
+    public async Task<LinkReportResponse> UpdateReportLinkAsync(LinkReportIsCheckedRequest request)
     {
-        var linkReport = _context.LinkReports.FirstOrDefault(x => x.Id == request.ReportId);
-        if (linkReport == null)
+        try
         {
-            return Task.FromResult(new LinkReportResponse());
+            var linkReport = await _context.LinkReports.FirstOrDefaultAsync(x => x.Id == request.ReportId);
+
+            if (linkReport == null)
+            {
+                Console.WriteLine($"[ERROR] ReportId {request.ReportId} not found.");
+                return new LinkReportResponse();
+            }
+
+            linkReport.IsChecked = request.IsChecked;
+            _context.LinkReports.Update(linkReport);
+            int affectedRows = await _context.SaveChangesAsync(); // ASENKRON OLSUN!
+
+            if (affectedRows == 0)
+            {
+                Console.WriteLine($"[ERROR] SaveChangesAsync did not update any rows for ReportId {request.ReportId}.");
+            }
+
+            return new LinkReportResponse
+            {
+                LinkId = linkReport.LinkId,
+                Message = linkReport.Message,
+                IsChecked = linkReport.IsChecked
+            };
         }
-        linkReport.IsChecked = request.IsChecked;
-        _context.LinkReports.Update(linkReport);
-        _context.SaveChanges();
-        return Task.FromResult(new LinkReportResponse
+        catch (Exception ex)
         {
-            LinkId = linkReport.LinkId,
-            Message = linkReport.Message,
-            IsChecked = linkReport.IsChecked
-        });
+            Console.WriteLine($"[EXCEPTION] UpdateReportLinkAsync Error: {ex.Message}");
+            return new LinkReportResponse();
+        }
     }
+
+
 
     public string CleanSearchTerm(string searchTerm)
     {

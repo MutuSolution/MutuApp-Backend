@@ -11,5 +11,5 @@ public class LinkReport
     public int Id { get; set; }
     public int LinkId { get; set; }
     public string? Message { get; set; }
-    public bool IsChecked { get; set; } = false;
+    public bool? IsChecked { get; set; }
 }
