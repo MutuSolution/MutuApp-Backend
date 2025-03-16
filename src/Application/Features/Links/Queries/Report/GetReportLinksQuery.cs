@@ -28,12 +28,10 @@ public class GetReportLinksQueryHandler : IRequestHandler<GetReportLinksQuery, I
     public async Task<IResponseWrapper> Handle(GetReportLinksQuery request, CancellationToken cancellationToken)
     {
         var linkList = await _linkService.GetLinkReportsAsync();
-        if (linkList.Count > 0)
-        {
-            var mappedLinkList = _mapper.Map<List<LinkReportResponse>>(linkList);
-            return await ResponseWrapper<List<LinkReportResponse>>
-                .SuccessAsync(mappedLinkList);
-        }
-        return await ResponseWrapper.FailAsync("[ML113] No links were found.");
+        var mappedList = _mapper.Map<List<LinkReportResponse>>(linkList);
+
+        return await Task.FromResult(
+            ResponseWrapper<List<LinkReportResponse>>.Success(mappedList)
+        );
     }
 }

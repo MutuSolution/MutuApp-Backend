@@ -30,8 +30,7 @@ public class ReportController : MyBaseController<ReportController>
     public async Task<IActionResult> GetLinkReportList()
     {
         var response = await MediatorSender.Send(new GetReportLinksQuery());
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
+        return Ok(response);
     }
 
     [HttpPut("link")]
