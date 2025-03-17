@@ -17,8 +17,7 @@ public class HomeController : MyBaseController<HomeController>
     public async Task<IActionResult> GetHomeLinkListAsync()
     {
         var response = await MediatorSender.Send(new GetHomeLinkQuery());
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
+        return Ok(response);
     }
 
     [HttpGet("username/{userName:required}")]
@@ -26,7 +25,15 @@ public class HomeController : MyBaseController<HomeController>
     public async Task<IActionResult> GetPublicLinkWithUsernameListAsync(string userName)
     {
         var response = await MediatorSender.Send(new GetPublicLinkWithUsernameQuery { UserName = userName});
-        if (response.IsSuccessful) return Ok(response);
-        return NotFound(response);
+        return Ok(response);
+    }
+
+
+    [HttpGet("likes/username/{userName:required}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublicLinkWithLikesUsernameListAsync(string userName)
+    {
+        var response = await MediatorSender.Send(new GetPublicLinkLikeWithUsernameQuery { UserName = userName });
+        return Ok(response);
     }
 }

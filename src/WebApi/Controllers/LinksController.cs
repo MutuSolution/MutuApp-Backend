@@ -64,9 +64,7 @@ public class LinksController : MyBaseController<LinksController>
     public async Task<IActionResult> GetLinksByUserName([FromQuery] LinksByUserNameParameters parameters)
     {
         var query = new GetPagedLinksByUserNameQuery { Parameters = parameters };
-        var result = await MediatorSender.Send(query);
-        if (result.IsSuccessful) return Ok(result);
-        return NotFound(result);
+        var result = await MediatorSender.Send(query); return Ok(result);
     }
 
     [HttpGet("all")]
@@ -74,9 +72,7 @@ public class LinksController : MyBaseController<LinksController>
     public async Task<IActionResult> GetLinks([FromQuery] LinkParameters parameters)
     {
         var query = new GetPagedLinksQuery { Parameters = parameters };
-        var result = await MediatorSender.Send(query);
-        if (result.IsSuccessful) return Ok(result);
-        return NotFound(result);
+        var result = await MediatorSender.Send(query); return Ok(result);
     }
 
     [HttpPut("soft-delete")]

@@ -29,7 +29,6 @@ public class LikesController : MyBaseController<LikesController>
     {
         var query = new GetPagedLikesByUserNameQuery { Parameters = parameters };
         var result = await MediatorSender.Send(query);
-        if (result.IsSuccessful) return Ok(result);
-        return NotFound(result);
+        return Ok(result);
     }
 }

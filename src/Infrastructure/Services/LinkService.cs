@@ -76,6 +76,7 @@ public class LinkService : ILinkService
         return linkInDb;
     }
 
+
     public async Task<List<LinkResponse>> GetLinkListAsync()
     {
         var likedLinkIds = _context.Likes
@@ -385,6 +386,20 @@ public class LinkService : ILinkService
         }
 
         return searchTerm.Replace("#", "");
+    }
+
+    public async Task<IResponseWrapper> PublicLinkLikeWithUsername(string userName)
+    {
+        var likedLinks = _context.Links
+     .Where(x => x.UserName == userName && x.LikeCount > 0)
+     .Sum(x => x.LikeCount);
+
+        // JSON nesnesi olarak döndürmek için bir anonim nesne oluştur
+        var response = new { LikeCount = likedLinks };
+        if(likedLinks < 1)
+        return await ResponseWrapper<object>.SuccessAsync(response,"Henüz beğeni almamış..");
+        return await ResponseWrapper<object>.SuccessAsync(response,"Beğeni sayısı başarıyla getirildi.");
+
     }
 }
 

@@ -16,6 +16,7 @@ public interface ILinkService
     Task<List<Link>> GetHomeLinkListAsync();
     Task<List<Link>> GetPublicLinkWithUsernameAsync(string userName);
     Task<LinkResponse> GetLinkByIdAsync(int id);
+    Task<IResponseWrapper> PublicLinkLikeWithUsername(string userName);
     Task<Link> UpdateLinkAsync(LinkResponse link);
     Task<int> DeleteLinkAsync(LinkResponse link);
     Task<IResponseWrapper> SoftDeleteLink(SoftDeleteLinkRequest request);
