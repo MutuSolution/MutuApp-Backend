@@ -1,0 +1,84 @@
+MutuApp Privacy Policy
+Last Updated: March 18, 2025
+
+What is MutuApp?
+MutuApp is a global online platform where users can share, store, and discover web links. Users can choose to share links publicly (visible to all users) or privately (only accessible by the link owner).
+
+This Privacy Policy explains how MutuApp collects, uses, shares, and protects your personal information. By using MutuApp, you agree to this Privacy Policy.
+
+What Personal Information Do We Collect?
+Information You Provide Voluntarily
+When registering for MutuApp, we collect the following information:
+
+Username, first name, last name
+Email address
+Password (stored securely, hashed and encrypted)
+When sharing links, we collect information including URLs, titles, and descriptions you provide.
+
+Additionally, if you submit reports or contact support, we collect details such as your username and email to address your requests.
+
+Information We Collect Automatically
+When you visit MutuApp, we automatically collect certain technical information, including:
+
+Your IP address
+Browser type and device details
+Usage data (pages visited, clicks, interactions)
+General geographic location (e.g., city or country-level)
+We use this information to improve platform performance and enhance user experience.
+
+How We Use Your Information
+We use your personal information to:
+
+Provide, operate, and maintain our services.
+Send account-related notifications, security alerts, and policy updates.
+Improve our content management, reporting systems, and security measures.
+Respond to user inquiries and offer customer support.
+Detect, prevent, and address fraud, spam, or unlawful activities.
+Content Moderation & Reporting
+MutuApp prohibits sharing certain types of content. Users can report any content they believe violates our policies. Reported content will be reviewed and removed within 5 business days. Prohibited content includes:
+
+Spam or advertising content
+Hate speech or discrimination
+Violence or harmful content
+Adult or explicit materials
+Illegal activities
+Copyright infringement
+Unauthorized sharing of personal information
+False or misleading information
+Security threats
+Inappropriate content for children
+Sharing Personal Information
+We may share your personal information only under the following circumstances:
+
+With law enforcement or regulatory authorities, if required by law or legal obligations.
+To protect the safety and security of our users and services.
+To prevent fraud or abuse.
+MutuApp does not sell or rent your personal data to third parties for advertising purposes.
+
+Security & Protection of Your Data
+We employ appropriate security measures to safeguard your data, including encryption, access controls, and secure data storage. However, no internet service can guarantee absolute security. Users are responsible for securing their account credentials and should not share passwords with others.
+
+Cookies & Similar Technologies
+MutuApp uses cookies and similar tracking technologies to enhance user experience. You may adjust your browser settings to refuse cookies; however, some functionalities of MutuApp may not operate properly without them.
+
+Account Deletion & Data Removal
+If you wish to close your account and delete your personal data, you can request account deletion by emailing us from your registered email address at contact@mutuapp.com with the phrase "I want to delete my account". Upon verification, your account and personal data will be permanently deleted or anonymized as soon as reasonably possible.
+
+Children’s Privacy
+MutuApp is not intended for users under the age of 13, and we do not knowingly collect personal data from children under this age. If we discover such information, it will be deleted immediately.
+
+Changes & Updates to This Policy
+We may occasionally update this Privacy Policy. Any changes will be posted prominently on our website and become effective immediately upon posting. Users are encouraged to regularly review this policy.
+
+Your Rights & Requests
+You have the right to access, correct, delete, or manage your personal data. To exercise these rights, please contact us at:
+
+Email: contact@mutuapp.com
+We will respond to your request as soon as possible.
+
+Contact Information
+For questions or requests regarding this Privacy Policy, please contact us at:
+
+Email: contact@mutuapp.com
+X (Twitter): x.com/mutuapp
+Thank you for using MutuApp!

@@ -17,6 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Common
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83FF95A3-BCA1-4D94-9C5B-80A497AFC0AA}"
 	ProjectSection(SolutionItems) = preProject
+		Privacy-Policy.txt = Privacy-Policy.txt
 		ReportTypeList.txt = ReportTypeList.txt
 		StringList.txt = StringList.txt
 		TermsOfUse.txt = TermsOfUse.txt
@@ -58,5 +59,8 @@ Global
 		{F500989B-0923-4B42-B726-BC3F81B8B41F} = {D6605B6F-74FC-44CA-AE51-E1FE0F11A729}
 		{9C2EFE84-8E39-4A20-ADC2-3064BCC81497} = {D6605B6F-74FC-44CA-AE51-E1FE0F11A729}
 		{9DC44BB8-C43E-4219-A8D3-9509127AD4FE} = {D6605B6F-74FC-44CA-AE51-E1FE0F11A729}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A86379B-0448-47BA-83A7-81D293B3779E}
 	EndGlobalSection
 EndGlobal
