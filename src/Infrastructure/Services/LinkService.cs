@@ -391,7 +391,7 @@ public class LinkService : ILinkService
     public async Task<IResponseWrapper> PublicLinkLikeWithUsername(string userName)
     {
         var likedLinks = _context.Links
-     .Where(x => x.UserName == userName && x.LikeCount > 0)
+     .Where(x => x.UserName == userName && x.LikeCount > 0 && x.IsDeleted == false && x.IsPublic == true)
      .Sum(x => x.LikeCount);
 
         // JSON nesnesi olarak döndürmek için bir anonim nesne oluştur

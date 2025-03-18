@@ -11,10 +11,10 @@ public class UserRegistrationRequestValidator : AbstractValidator<UserRegistrati
     {
         var forbiddenWords = new List<string>
 {
-    "admin", "root", "superuser", "administrator", "guest", "support", "test",
-    "developer", "manager", "staff", "owner", "system", "user", "info",
-    "webmaster", "moderator", "staff", "security", "service", "account",
-    "backup", "poweruser", "access", "console", "privilege", "configuration",
+    "admin", "root", "superuser", "administrator", "guest", "support", "test","all-links",
+    "developer", "manager", "staff", "owner", "system", "user", "info","terms","links",
+    "webmaster", "moderator", "staff", "security", "service", "account","privacy","register","login",
+    "backup", "poweruser", "access", "console", "privilege", "configuration","profile",
     "service", "login", "password", "command", "super", "control", "maintenance"
 };
 
